@@ -1,0 +1,196 @@
+<resources>
+    <string name="app_name">TaffyQSL</string>
+
+    <!-- Navigation -->
+    <string name="nav_certificates">Certificates</string>
+    <string name="nav_stations">Stations</string>
+    <string name="nav_logs">Logs</string>
+    <string name="nav_lotw">LoTW</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Common -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
+    <string name="delete">Delete</string>
+    <string name="export">Export</string>
+    <string name="close">Close</string>
+    <string name="create">Create</string>
+    <string name="required_field">This field is required</string>
+    <string name="passwords_donot_match">Passwords do not match</string>
+    <string name="file_saved">File saved successfully</string>
+
+    <!-- Certificates -->
+    <string name="no_certificates">No certificates imported.\nTap + to import a .p12 file.</string>
+    <string name="import_cert">Import Certificate</string>
+    <string name="cert_import">Import Certificate</string>
+    <string name="cert_import_password_title">Enter P12 Password</string>
+    <string name="cert_import_password_message">Enter the password for the .p12 certificate file.</string>
+    <string name="cert_delete_title">Delete Certificate</string>
+    <string name="cert_delete_message">Delete certificate for %1$s? This cannot be undone and will remove the private key.</string>
+    <string name="cert_import_success">Certificate for %1$s imported successfully.</string>
+    <string name="cert_import_failed">Import failed: %1$s</string>
+    <string name="fingerprint">SHA-256 Fingerprint</string>
+    <string name="email">Email</string>
+    <string name="cert_properties">Certificate Properties</string>
+    <string name="cert_export_p12">Export as .p12 Backup</string>
+    <string name="cert_export_title">Set Backup Password</string>
+    <string name="cert_export_success">Certificate exported successfully.</string>
+    <string name="callsign">Callsign</string>
+    <string name="holder_name">Holder Name</string>
+    <string name="dxcc_entity">DXCC Entity</string>
+    <string name="qso_date_range">QSO Valid Date Range</string>
+    <string name="cert_validity">Certificate Validity</string>
+    <string name="issuer">Issuer</string>
+    <string name="serial_number">Serial Number</string>
+    <string name="status">Status</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+
+    <!-- Stations -->
+    <string name="no_stations">No station locations.\nTap + to add a station.</string>
+    <string name="add_station">Add Station</string>
+    <string name="new_station">New Station</string>
+    <string name="edit_station">Edit Station</string>
+    <string name="station">Station</string>
+    <string name="station_name">Station Name</string>
+    <string name="grid_square">Grid Square (Maidenhead)</string>
+    <string name="state_province">Province / State</string>
+    <string name="county">County</string>
+    <string name="cq_zone">CQ Zone (1–40)</string>
+    <string name="itu_zone">ITU Zone (1–90)</string>
+    <string name="iota_id">IOTA ID (e.g. AS-001)</string>
+    <string name="grid_format_error">Invalid grid square. Format: AA00 or AA00aa</string>
+    <string name="no_cert_for_callsign">No certificate found for this callsign. Please import a certificate first.</string>
+    <string name="select_callsign">Select Callsign from Certificate</string>
+    <string name="no_certs_import_first">No certificates imported. Please import a .p12 file first.</string>
+    <string name="none">None</string>
+    <string name="station_delete_title">Delete Station</string>
+    <string name="station_delete_message">Delete station \'%1$s\'? Signed records using this station are not affected.</string>
+    <string name="delete_station">Delete Station</string>
+    <string name="delete_station_confirm">Delete station \'%1$s\'? This cannot be undone.</string>
+
+    <!-- Logs -->
+    <string name="tab_sign_log">Sign Log</string>
+    <string name="tab_adif_files">ADIF Files</string>
+    <string name="sign_adif_description">Select an ADIF file (.adi, .adif) to sign. You can save or upload to LoTW after signing.</string>
+    <string name="select_adif_file">Select ADIF File…</string>
+    <string name="no_adif_files">No ADIF files created.\nTap + to create a new log.</string>
+    <string name="new_adif_log">New ADIF Log</string>
+    <string name="new_adif_title">New ADIF Log</string>
+    <string name="log_name">Log Name</string>
+    <string name="rename">Rename</string>
+    <string name="rename_file_title">Rename Log File</string>
+    <string name="delete_file_title">Delete Log File</string>
+    <string name="delete_file_message">Delete log \'%1$s\'?</string>
+    <string name="sign_log">Sign Log</string>
+    <string name="source_file">Source File</string>
+    <string name="select_station">Select Station</string>
+    <string name="no_stations_available">No stations configured. Please create a station first.</string>
+    <string name="select_station_first">Please select a station first.</string>
+    <string name="no_cert_for_station">No certificate found for this station\'s callsign.</string>
+    <string name="date_filter_optional">Date Filter (Optional)</string>
+    <string name="date_from">Date From</string>
+    <string name="date_to">Date To</string>
+    <string name="clear_date_filter">Clear dates</string>
+    <string name="upload_to_lotw">Upload to LoTW after signing</string>
+    <string name="signing_complete">Signing Complete</string>
+    <string name="signing_result_total">Total QSOs: %1$d</string>
+    <string name="signing_result_signed">Signed: %1$d</string>
+    <string name="signing_result_duplicates">Skipped (already uploaded): %1$d</string>
+    <string name="signing_result_date_filtered">Skipped (date filter): %1$d</string>
+    <string name="signing_result_invalid">Skipped (invalid): %1$d</string>
+    <string name="signing_result_grid_mismatch">Skipped (grid mismatch): %1$d</string>
+    <string name="uploading_to_lotw">Uploading to LoTW…</string>
+    <string name="btn_upload_to_lotw">Upload to LoTW</string>
+    <string name="upload_error">Upload error: %1$s</string>
+    <string name="upload_response">Server response:\n%1$s</string>
+    <string name="save_tq8">Save .tq8 File</string>
+    <string name="no_logs">No logs imported.\nTap + to import an ADIF file.</string>
+    <string name="import_adif">Import ADIF</string>
+    <string name="sign_and_upload">Sign and Upload</string>
+    <string name="sign">Sign</string>
+    <string name="signing_in_progress">Signing in progress…</string>
+    <string name="signing_failed">Signing Failed</string>
+
+    <!-- QSO -->
+    <string name="qso_list">QSO Records</string>
+    <string name="qso">QSO</string>
+    <string name="no_qso_records">No QSO records.\nTap + to add one.</string>
+    <string name="add_qso">Add QSO</string>
+    <string name="new_qso">New QSO</string>
+    <string name="edit_qso">Edit QSO</string>
+    <string name="qso_date">UTC Date</string>
+    <string name="qso_time_utc">UTC Time</string>
+    <string name="band">Band</string>
+    <string name="mode">Mode</string>
+    <string name="submode">Submode (optional)</string>
+    <string name="frequency_mhz">Frequency (MHz)</string>
+    <string name="rx_frequency_mhz">RX Frequency (MHz, optional)</string>
+    <string name="rx_band">RX Band (optional)</string>
+    <string name="propagation_mode">Propagation Mode (optional)</string>
+    <string name="satellite">Satellite (optional)</string>
+    <string name="delete_qso_title">Delete QSO</string>
+    <string name="delete_qso_message">Delete QSO with %1$s?</string>
+
+    <!-- ADIF Import -->
+    <string name="import_result_title">Import Complete</string>
+    <plurals name="import_result_body">
+        <item quantity="one">Imported %1$d QSOs, skipped %2$d invalid record.</item>
+        <item quantity="other">Imported %1$d QSOs, skipped %2$d invalid records.</item>
+    </plurals>
+    <string name="qso_count">%1$d QSOs</string>
+    <string name="import_adif_name_title">Log Name</string>
+    <string name="import_adif_name_hint">Enter a name for the imported log</string>
+
+    <!-- QSO List Screen -->
+    <string name="export_adif">Export ADIF</string>
+    <string name="select_station_to_sign">Select Station to Sign</string>
+    <string name="sign_action">Sign</string>
+
+    <!-- QSO Edit Screen -->
+    <string name="field_time">UTC Time</string>
+    <string name="band_inferred">Auto-inferred: %1$s</string>
+    <string name="band_or_freq_required">Band or frequency is required</string>
+    <string name="invalid_time_format">Invalid time format (use HHMM or HHMMSS)</string>
+    <string name="invalid_callsign_format">Invalid callsign format</string>
+    <string name="freq_out_of_band">Frequency is outside the selected band\'s range</string>
+
+    <!-- LoTW -->
+    <string name="lotw_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="settings_section_general">General</string>
+    <string name="settings_section_lotw">LoTW</string>
+    <string name="settings_section_storage">Storage</string>
+    <string name="settings_section_about">About</string>
+    <string name="offline_mode">Offline Mode</string>
+    <string name="offline_mode_desc">Disable network features</string>
+    <string name="date_format">Date Format</string>
+    <string name="date_format_desc">Choose date display format</string>
+    <string name="lotw_credentials">LoTW Login Information</string>
+    <string name="lotw_credentials_desc">Configure LoTW username and password</string>
+    <string name="clear_cache">Clear Cache</string>
+    <string name="clear_cache_desc">Remove temporary files and cached data</string>
+    <string name="about">About</string>
+    <string name="about_subtitle">About this app</string>
+    <string name="open_source_licenses">Open Source Licenses</string>
+    <string name="licenses_subtitle">Third-party libraries and licenses</string>
+
+    <!-- About -->
+    <string name="about_app_name">TaffyQSL</string>
+    <string name="about_version">Version 2026-SpringBlossom-a</string>
+    <string name="about_description">TaffyQSL is an amateur radio logging application that supports ADIF file management, QSO signing, and LoTW integration.</string>
+
+    <!-- Licenses -->
+    <string name="licenses_title">Open Source Licenses</string>
+    <string name="licenses_intro">This app uses the following open source libraries:</string>
+
+    <!-- Debug -->
+    <string name="settings_section_developer">Developer</string>
+    <string name="debug_mode">Debug Mode</string>
+    <string name="debug_mode_desc">Enable developer features for testing</string>
+    <string name="dxcc_entity_debug">DXCC Entity (debug override)</string>
+    <string name="dxcc_search_hint">Search DXCC…</string>
+</resources>

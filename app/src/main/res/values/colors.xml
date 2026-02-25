@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="md_blue_100">#FFBBDEFB</color>
+    <color name="md_blue_700">#FF1976D2</color>
+    <color name="md_blue_900">#FF0D47A1</color>
+    <color name="md_teal_700">#FF00796B</color>
+</resources>
