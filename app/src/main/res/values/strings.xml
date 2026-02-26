@@ -181,7 +181,9 @@
     <!-- About -->
     <string name="about_app_name">TaffyQSL</string>
     <string name="about_version">Version 2026-SpringBlossom-a</string>
-    <string name="about_description">TaffyQSL is an amateur radio logging application that supports ADIF file management, QSO signing, and LoTW integration.</string>
+    <string name="about_description">
+       A free, libre and privacy-respecting amateur radio logbook. Built for ADIF management, QSO signing, and LoTW integration — with hardware-backed key protection on Android.
+    </string>
 
     <!-- Licenses -->
     <string name="licenses_title">Open Source Licenses</string>
@@ -193,4 +195,7 @@
     <string name="debug_mode_desc">Enable developer features for testing</string>
     <string name="dxcc_entity_debug">DXCC Entity (debug override)</string>
     <string name="dxcc_search_hint">Search DXCC…</string>
+    <string name="about_source_code"><![CDATA[Source code & updates: https://github.com/sophiel-meow/TaffyQSL]]></string>
+    <string name="about_designed_by"><![CDATA[Designed by Sophiel & Alice 🌸]]></string>
+    <string name="about_copyleft"><![CDATA[🄯 2026 Sophiel & Alice – Free software – share and enjoy!]]></string>
 </resources>
