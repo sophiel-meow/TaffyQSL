@@ -26,11 +26,15 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.db.QsoRecordEntity
+import moe.zzy040330.taffyqsl.data.AppPreferences
 import moe.zzy040330.taffyqsl.domain.model.CertInfo
 import moe.zzy040330.taffyqsl.domain.model.SigningProgress
 import moe.zzy040330.taffyqsl.domain.model.StationLocation
 import java.io.File
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -368,6 +372,8 @@ fun SignOptionsDialog(
     onSign: (StationLocation, LocalDate?, LocalDate?) -> Unit,
     onDismiss: () -> Unit
 ) {
+    val context = LocalContext.current
+    val dateFormat = remember { AppPreferences.getInstance(context).dateFormat }
     var selectedStation by remember { mutableStateOf<StationLocation?>(null) }
     var stationExpanded by remember { mutableStateOf(false) }
     var dateFrom by remember { mutableStateOf<LocalDate?>(null) }
@@ -502,13 +508,13 @@ fun SignOptionsDialog(
                         onClick = { showDateFromPicker = true },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(dateFrom?.toString() ?: stringResource(R.string.date_from))
+                        Text(dateFrom?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_from))
                     }
                     OutlinedButton(
                         onClick = { showDateToPicker = true },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(dateTo?.toString() ?: stringResource(R.string.date_to))
+                        Text(dateTo?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_to))
                     }
                 }
                 if (dateFrom != null || dateTo != null) {
@@ -539,17 +545,32 @@ fun QsoRecordCard(
     onDelete: () -> Unit,
     onClick: () -> Unit
 ) {
-    val formattedDate = if (qso.dateStr.length == 8) {
-        "${qso.dateStr.substring(0, 4)}-${qso.dateStr.substring(4, 6)}-${
-            qso.dateStr.substring(
-                6,
-                8
-            )
-        }"
-    } else qso.dateStr
+    val context = LocalContext.current
+    val prefs = remember { AppPreferences.getInstance(context) }
+    val dateFormat = prefs.dateFormat
+    val useLocalTime = prefs.useLocalTime
+
+    val qsoDate = if (qso.dateStr.length == 8) {
+        runCatching {
+            LocalDate.parse(qso.dateStr, java.time.format.DateTimeFormatter.BASIC_ISO_DATE)
+        }.getOrNull()
+    } else null
+
+    val formattedDate = qsoDate?.let { dateFormat.formatDate(it) } ?: qso.dateStr
 
     val formattedTime = if (qso.timeStr.length >= 4) {
-        "${qso.timeStr.substring(0, 2)}:${qso.timeStr.substring(2, 4)}Z"
+        val utcHour = qso.timeStr.substring(0, 2).toIntOrNull() ?: 0
+        val utcMin = qso.timeStr.substring(2, 4).toIntOrNull() ?: 0
+        if (useLocalTime && qsoDate != null) {
+            val localTime = LocalTime.of(utcHour, utcMin)
+                .atDate(qsoDate)
+                .atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalTime()
+            "${localTime.hour.toString().padStart(2, '0')}:${localTime.minute.toString().padStart(2, '0')}"
+        } else {
+            "${utcHour.toString().padStart(2, '0')}:${utcMin.toString().padStart(2, '0')}Z"
+        }
     } else "${qso.timeStr}Z"
 
     Card(

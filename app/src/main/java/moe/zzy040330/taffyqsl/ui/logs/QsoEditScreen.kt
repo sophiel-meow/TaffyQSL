@@ -9,6 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -16,8 +17,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.R
+import moe.zzy040330.taffyqsl.data.AppPreferences
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,6 +30,10 @@ fun QsoEditScreen(
     viewModel: QsoEditViewModel = viewModel()
 ) {
     val callsign by viewModel.callsign.collectAsState()
+    val context = LocalContext.current
+    val prefs = remember { AppPreferences.getInstance(context) }
+    val dateFormat = prefs.dateFormat
+    val useLocalTime = prefs.useLocalTime
     val date by viewModel.date.collectAsState()
     val time by viewModel.time.collectAsState()
     val selectedMode by viewModel.selectedMode.collectAsState()
@@ -84,16 +92,31 @@ fun QsoEditScreen(
     }
 
     if (showTimePicker) {
+        // When useLocalTime, show the picker in local time (convert UTC→local using QSO date)
+        val effectiveDate = date ?: LocalDate.now(ZoneOffset.UTC)
+        val pickerTime = if (useLocalTime && time != null) {
+            time!!.atDate(effectiveDate)
+                .atZone(ZoneOffset.UTC)
+                .withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalTime()
+        } else time
         val state = rememberTimePickerState(
-            initialHour = time?.hour ?: 0,
-            initialMinute = time?.minute ?: 0,
+            initialHour = pickerTime?.hour ?: 0,
+            initialMinute = pickerTime?.minute ?: 0,
             is24Hour = true
         )
         AlertDialog(
             onDismissRequest = { showTimePicker = false },
             confirmButton = {
                 TextButton(onClick = {
-                    viewModel.time.value = LocalTime.of(state.hour, state.minute, 0)
+                    val picked = LocalTime.of(state.hour, state.minute, 0)
+                    // Convert local→UTC before storing; ViewModel always holds UTC
+                    viewModel.time.value = if (useLocalTime) {
+                        picked.atDate(effectiveDate)
+                            .atZone(ZoneId.systemDefault())
+                            .withZoneSameInstant(ZoneOffset.UTC)
+                            .toLocalTime()
+                    } else picked
                     showTimePicker = false
                 }) { Text(stringResource(R.string.ok)) }
             },
@@ -183,7 +206,7 @@ fun QsoEditScreen(
                     onClick = { showDatePicker = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(date?.toString() ?: stringResource(R.string.qso_date))
+                    Text(date?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.qso_date))
                 }
 
                 // TODO: change here to support seconds.
@@ -191,7 +214,13 @@ fun QsoEditScreen(
                     onClick = { showTimePicker = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(time?.toString() ?: stringResource(R.string.field_time))
+                    val displayTime = if (useLocalTime && time != null) {
+                        val d = date ?: LocalDate.now(ZoneOffset.UTC)
+                        time!!.atDate(d).atZone(ZoneOffset.UTC)
+                            .withZoneSameInstant(ZoneId.systemDefault())
+                            .toLocalTime()
+                    } else time
+                    Text(displayTime?.toString() ?: stringResource(R.string.field_time))
                 }
             }
 

@@ -1,6 +1,7 @@
 package moe.zzy040330.taffyqsl.ui.settings
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,6 +14,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.VpnKey
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
@@ -20,6 +23,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.filled.BugReport
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,15 +38,20 @@ import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.BuildConfig
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.AppPreferences
+import moe.zzy040330.taffyqsl.data.DateFormatOption
 
 @Composable
 fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
-    var offlineMode by remember { mutableStateOf(false) }
+//    var offlineMode by remember { mutableStateOf(false) }
 
     val context = LocalContext.current
+    val prefs = remember { AppPreferences.getInstance(context) }
     var debugMode by remember {
-        mutableStateOf(if (BuildConfig.DEBUG) AppPreferences.getInstance(context).isDebugMode else false)
+        mutableStateOf(if (BuildConfig.DEBUG) prefs.isDebugMode else false)
     }
+    var dateFormat by remember { mutableStateOf(prefs.dateFormat) }
+    var dateFormatExpanded by remember { mutableStateOf(false) }
+    var useLocalTime by remember { mutableStateOf(prefs.useLocalTime) }
 
     // TODO: dummy items here
     LazyColumn(
@@ -54,23 +63,58 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
         item {
             SettingsSectionHeader(stringResource(R.string.settings_section_general))
         }
+//        item {
+//            SettingsItemWithSwitch(
+//                icon = Icons.Default.CloudOff,
+//                title = stringResource(R.string.offline_mode),
+//                subtitle = stringResource(R.string.offline_mode_desc),
+//                checked = offlineMode,
+//                onCheckedChange = { offlineMode = it }
+//            )
+//        }
+
         item {
             SettingsItemWithSwitch(
-                icon = Icons.Default.CloudOff,
-                title = stringResource(R.string.offline_mode),
-                subtitle = stringResource(R.string.offline_mode_desc),
-                checked = offlineMode,
-                onCheckedChange = { offlineMode = it }
+                icon = Icons.Default.Schedule,
+                title = stringResource(R.string.use_local_time),
+                subtitle = stringResource(R.string.use_local_time_desc),
+                checked = useLocalTime,
+                onCheckedChange = { enabled ->
+                    useLocalTime = enabled
+                    prefs.useLocalTime = enabled
+                }
             )
         }
+
         item {
-            SettingsItem(
-                icon = Icons.Default.CalendarToday,
-                title = stringResource(R.string.date_format),
-                subtitle = stringResource(R.string.date_format_desc),
-                onClick = { /* TODO: Open date format dialog */ }
-            )
+            Box {
+                SettingsItem(
+                    icon = Icons.Default.CalendarToday,
+                    title = stringResource(R.string.date_format),
+                    subtitle = dateFormat.preview(),
+                    onClick = { dateFormatExpanded = true }
+                )
+                DropdownMenu(
+                    expanded = dateFormatExpanded,
+                    onDismissRequest = { dateFormatExpanded = false }
+                ) {
+                    DateFormatOption.entries.forEach { option ->
+                        DropdownMenuItem(
+                            text = { Text("${option.longPattern}  (${option.preview()})") },
+                            onClick = {
+                                dateFormat = option
+                                prefs.dateFormat = option
+                                dateFormatExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
         }
+
+        // TODO: dark & light theme
+        // TODO: i18n
+
 
         item {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -92,21 +136,25 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         }
 
-        item {
-            SettingsSectionHeader(stringResource(R.string.settings_section_storage))
-        }
-        item {
-            SettingsItem(
-                icon = Icons.Default.Delete,
-                title = stringResource(R.string.clear_cache),
-                subtitle = stringResource(R.string.clear_cache_desc),
-                onClick = { /* TODO: Clear cache */ }
-            )
-        }
+//        item {
+//            SettingsSectionHeader(stringResource(R.string.settings_section_storage))
+//        }
+//        item {
+//            SettingsItem(
+//                icon = Icons.Default.Delete,
+//                title = stringResource(R.string.clear_cache),
+//                subtitle = stringResource(R.string.clear_cache_desc),
+//                onClick = { /* TODO: Clear cache */ }
+//            )
+//        }
 
-        item {
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-        }
+//        item {
+//            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+//        }
+
+        // TODO: backup & restore
+        // TODO: pin & biometric
+
 
         item {
             SettingsSectionHeader(stringResource(R.string.settings_section_about))
@@ -135,6 +183,9 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             item {
                 SettingsSectionHeader(stringResource(R.string.settings_section_developer))
             }
+
+            // TODO: encryption / key managements
+
             item {
                 SettingsItemWithSwitch(
                     icon = Icons.Default.BugReport,
@@ -143,7 +194,7 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
                     checked = debugMode,
                     onCheckedChange = { enabled ->
                         debugMode = enabled
-                        AppPreferences.getInstance(context).isDebugMode = enabled
+                        prefs.isDebugMode = enabled
                     }
                 )
             }

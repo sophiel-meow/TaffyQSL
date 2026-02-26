@@ -23,6 +23,7 @@ import moe.zzy040330.taffyqsl.data.db.AppDatabase
 import moe.zzy040330.taffyqsl.data.db.QsoRecordEntity
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class QsoEditViewModel(
@@ -255,8 +256,8 @@ class QsoEditViewModel(
     fun resetForm() {
         if (!isNew) return
         callsign.value = ""
-        date.value = LocalDate.now()
-        time.value = LocalTime.now()
+        date.value = LocalDate.now(ZoneOffset.UTC)
+        time.value = LocalTime.now(ZoneOffset.UTC)
         // Keep mode, band, freq for convenience
         submode.value = ""
         rxBand.value = ""

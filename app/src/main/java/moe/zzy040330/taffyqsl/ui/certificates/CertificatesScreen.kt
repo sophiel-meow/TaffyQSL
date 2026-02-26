@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import moe.zzy040330.taffyqsl.R
+import moe.zzy040330.taffyqsl.data.AppPreferences
 import moe.zzy040330.taffyqsl.domain.model.CertInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -234,6 +235,8 @@ fun CertificateCard(
     onClick: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val context = LocalContext.current
+    val dateFormat = remember { AppPreferences.getInstance(context).dateFormat }
     Card(modifier = Modifier
         .fillMaxWidth()
         .clickable(onClick = onClick)) {
@@ -263,10 +266,10 @@ fun CertificateCard(
                 }
                 val qsoRange = when {
                     cert.qsoNotBefore != null && cert.qsoNotAfter != null ->
-                        "${cert.qsoNotBefore} \u2013 ${cert.qsoNotAfter}"
+                        "${dateFormat.formatDate(cert.qsoNotBefore)} \u2013 ${dateFormat.formatDate(cert.qsoNotAfter)}"
 
-                    cert.qsoNotBefore != null -> "From ${cert.qsoNotBefore}"
-                    cert.qsoNotAfter != null -> "Until ${cert.qsoNotAfter}"
+                    cert.qsoNotBefore != null -> "From ${dateFormat.formatDate(cert.qsoNotBefore)}"
+                    cert.qsoNotAfter != null -> "Until ${dateFormat.formatDate(cert.qsoNotAfter)}"
                     else -> null
                 }
                 qsoRange?.let {
@@ -305,6 +308,8 @@ fun CertDetailSheet(
     onExport: () -> Unit,
     onDelete: () -> Unit
 ) {
+    val context = LocalContext.current
+    val dateFormat = remember { AppPreferences.getInstance(context).dateFormat }
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
             modifier = Modifier
@@ -330,16 +335,16 @@ fun CertDetailSheet(
 
             val qsoRange = when {
                 cert.qsoNotBefore != null && cert.qsoNotAfter != null ->
-                    "${cert.qsoNotBefore} \u2013 ${cert.qsoNotAfter}"
+                    "${dateFormat.formatDate(cert.qsoNotBefore)} \u2013 ${dateFormat.formatDate(cert.qsoNotAfter)}"
 
-                cert.qsoNotBefore != null -> "From ${cert.qsoNotBefore}"
-                cert.qsoNotAfter != null -> "Until ${cert.qsoNotAfter}"
+                cert.qsoNotBefore != null -> "From ${dateFormat.formatDate(cert.qsoNotBefore)}"
+                cert.qsoNotAfter != null -> "Until ${dateFormat.formatDate(cert.qsoNotAfter)}"
                 else -> "—"
             }
             CertDetailRow(stringResource(R.string.qso_date_range), qsoRange)
 
             val validityRange =
-                "${cert.notBefore ?: "—"} \u2013 ${cert.notAfter ?: "—"}"
+                "${cert.notBefore?.let { dateFormat.formatDate(it) } ?: "—"} \u2013 ${cert.notAfter?.let { dateFormat.formatDate(it) } ?: "—"}"
             CertDetailRow(stringResource(R.string.cert_validity), validityRange)
             CertDetailRow(stringResource(R.string.issuer), cert.issuerOrg.ifEmpty { "—" })
             CertDetailRow(stringResource(R.string.serial_number), cert.serialNumber)

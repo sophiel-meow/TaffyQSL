@@ -169,6 +169,8 @@
     <string name="offline_mode_desc">Disable network features</string>
     <string name="date_format">Date Format</string>
     <string name="date_format_desc">Choose date display format</string>
+    <string name="use_local_time">Use Local Time</string>
+    <string name="use_local_time_desc">Show and enter times in local timezone; stored as UTC</string>
     <string name="lotw_credentials">LoTW Login Information</string>
     <string name="lotw_credentials_desc">Configure LoTW username and password</string>
     <string name="clear_cache">Clear Cache</string>

@@ -34,6 +34,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.R
+import moe.zzy040330.taffyqsl.data.AppPreferences
 import moe.zzy040330.taffyqsl.data.db.QsoFileEntity
 import moe.zzy040330.taffyqsl.domain.model.SigningProgress
 import moe.zzy040330.taffyqsl.domain.model.StationLocation
@@ -99,6 +100,7 @@ fun SignLogTab(
     contentPadding: PaddingValues
 ) {
     val context = LocalContext.current
+    val dateFormat = remember { AppPreferences.getInstance(context).dateFormat }
     val stations by viewModel.stations.collectAsState()
     val signingProgress by viewModel.signingProgress.collectAsState()
     val uploadState by viewModel.uploadState.collectAsState()
@@ -566,13 +568,13 @@ fun SignLogTab(
                 onClick = { showDateFromPicker = true },
                 modifier = Modifier.weight(1f)
             ) {
-                Text(dateFrom?.toString() ?: stringResource(R.string.date_from))
+                Text(dateFrom?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_from))
             }
             OutlinedButton(
                 onClick = { showDateToPicker = true },
                 modifier = Modifier.weight(1f)
             ) {
-                Text(dateTo?.toString() ?: stringResource(R.string.date_to))
+                Text(dateTo?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_to))
             }
         }
 
