@@ -73,6 +73,13 @@ class QsoEditViewModel(
     private val _rxBandAutoInferred = MutableStateFlow<String?>(null)
     val rxBandAutoInferred: StateFlow<String?> = _rxBandAutoInferred
 
+    // Whether propMode's current value was auto-set by satellite selection (not by the user).
+    private var propModeAutoSet = false
+
+    // Whether freq/rxFreq were auto-filled from satellite info (not manually entered).
+    private var freqAutoSet = false
+    private var rxFreqAutoSet = false
+
     /**
      * True when both freq and selectedBand are non-empty but the entered frequency
      * falls outside the selected band's range.
@@ -100,14 +107,21 @@ class QsoEditViewModel(
         .map { cs -> cs.isBlank() || CALLSIGN_REGEX.matches(cs) }
         .stateIn(viewModelScope, SharingStarted.Eagerly, true)
 
-    /** True when all required fields are valid. */
+    /** True when all required fields are valid.
+     *  Frequency is optional when a satellite is selected. */
     val isValid: StateFlow<Boolean> = combine(
-        callsign, date, time, selectedBand, freq
-    ) { cs, d, t, b, f ->
-        cs.isNotBlank() && d != null && t != null && (b.isNotBlank() || f.isNotBlank()) && f.isNotBlank()
-    }.combine(callsignValid) { fieldsOk, csOk -> fieldsOk && csOk }
-        .combine(selectedMode) { prev, m -> prev && m.isNotBlank() }
-        .stateIn(viewModelScope, SharingStarted.Eagerly, false)
+        callsign, date, time, selectedMode
+    ) { cs, d, t, m ->
+        cs.isNotBlank() && d != null && t != null && m.isNotBlank()
+    }.combine(callsignValid) { fieldsOk, csOk ->
+        fieldsOk && csOk
+    }.combine(
+        combine(selectedBand, freq, satName) { b, f, sat ->
+            b.isNotBlank() || f.isNotBlank() || sat.isNotBlank()
+        }
+    ) { prev, freqOrSatOk ->
+        prev && freqOrSatOk
+    }.stateIn(viewModelScope, SharingStarted.Eagerly, false)
 
     init {
         // Pre-load config on IO so dropdown lists are ready before the user taps them
@@ -147,6 +161,7 @@ class QsoEditViewModel(
     /** Called when the user changes the frequency field.
      * Auto-infers TX band if not manually set.*/
     fun onFreqChanged(newFreq: String) {
+        freqAutoSet = false
         freq.value = newFreq
         if (newFreq.isBlank()) {
             // Clear auto-inferred band if frequency is cleared
@@ -183,6 +198,7 @@ class QsoEditViewModel(
     /** Called when the user changes the RX frequency field.
      * Auto-infers RX band if not manually set. */
     fun onRxFreqChanged(newFreq: String) {
+        rxFreqAutoSet = false
         rxFreq.value = newFreq
         if (newFreq.isBlank()) {
             // Clear auto-inferred band if frequency is cleared
@@ -216,12 +232,78 @@ class QsoEditViewModel(
         _rxBandAutoInferred.value = null
     }
 
+    /**
+     * Called when the user selects or clears a satellite.
+     * - Auto sets propMode to "SAT" (unless user already set it manually).
+     * - Auto-fills TX freq (downlink) and RX freq (uplink) from satellites_info.json
+     *   (unless the user already entered a frequency manually).
+     */
+    fun onSatNameChanged(name: String) {
+        satName.value = name
+        if (name.isNotEmpty()) {
+            if (propMode.value.isEmpty() || propModeAutoSet) {
+                propMode.value = "SAT"
+                propModeAutoSet = true
+            }
+            val satInfo = configRepo.findSatelliteByAlias(name)
+            if (satInfo != null) {
+                if (freq.value.isEmpty() || freqAutoSet) {
+                    val dl = "%.3f".format(satInfo.downlinkFreqMhz)
+                    freq.value = dl
+                    freqAutoSet = true
+                    configRepo.bandForFreq(satInfo.downlinkFreqMhz)?.let {
+                        selectedBand.value = it
+                        _bandAutoInferred.value = it
+                    }
+                }
+                if (rxFreq.value.isEmpty() || rxFreqAutoSet) {
+                    val ul = "%.3f".format(satInfo.uplinkFreqMhz)
+                    rxFreq.value = ul
+                    rxFreqAutoSet = true
+                    configRepo.bandForFreq(satInfo.uplinkFreqMhz)?.let {
+                        rxBand.value = it
+                        _rxBandAutoInferred.value = it
+                    }
+                }
+            }
+        } else {
+            if (propModeAutoSet) {
+                propMode.value = ""
+                propModeAutoSet = false
+            }
+            if (freqAutoSet) {
+                freq.value = ""
+                selectedBand.value = ""
+                _bandAutoInferred.value = null
+                freqAutoSet = false
+            }
+            if (rxFreqAutoSet) {
+                rxFreq.value = ""
+                rxBand.value = ""
+                _rxBandAutoInferred.value = null
+                rxFreqAutoSet = false
+            }
+        }
+    }
+
+    /**
+     * Called when the user explicitly selects a propagation mode.
+     * Marks propMode as manually set so satellite selection won't override it.
+     */
+    fun onPropModeChanged(name: String) {
+        propMode.value = name
+        propModeAutoSet = false
+    }
+
     /** Save the QSO record (insert or update), then invoke [onSuccess] on the main thread. */
     fun save(onSuccess: () -> Unit) {
         val d = date.value ?: return
         val t = time.value ?: return
+        // Auto infer band: explicit selection -> freq -> satellite downlink frequency
+        val freqMhz = freq.value.toDoubleOrNull()
+            ?: configRepo.findSatelliteByAlias(satName.value)?.downlinkFreqMhz
         val band = selectedBand.value.ifBlank {
-            configRepo.bandForFreq(freq.value.toDoubleOrNull() ?: 0.0) ?: return
+            freqMhz?.let { configRepo.bandForFreq(it) } ?: ""
         }
 
         val entity = QsoRecordEntity(
@@ -264,6 +346,9 @@ class QsoEditViewModel(
         rxFreq.value = ""
         propMode.value = ""
         satName.value = ""
+        propModeAutoSet = false
+        freqAutoSet = false
+        rxFreqAutoSet = false
         _bandAutoInferred.value = null
         _rxBandAutoInferred.value = null
     }
@@ -271,7 +356,7 @@ class QsoEditViewModel(
     companion object {
         // FIXME: a robust callsign regex
         val CALLSIGN_REGEX =
-            Regex("""^([A-Z0-9]{1,4}/)?[A-Z0-9]{1,3}[0-9][A-Z]{1,3}(/[A-Z0-9]+)?$""")
+            Regex("""(?i)\b(?:[A-Z0-9]+/)?[A-Z]{1,3}[0-9][A-Z0-9]{0,4}(?:/[A-Z0-9]+)?\b""")
 
         fun parseTimeInput(input: String): LocalTime? {
             val digits = input.filter { it.isDigit() }

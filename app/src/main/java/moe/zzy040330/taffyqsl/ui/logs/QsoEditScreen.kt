@@ -342,7 +342,8 @@ fun QsoEditScreen(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            if (submitAttempted && selectedBand.isBlank() && freq.isBlank()) {
+            // Band or freq is required only when no satellite is selected
+            if (submitAttempted && selectedBand.isBlank() && freq.isBlank() && satName.isBlank()) {
                 Text(
                     text = stringResource(R.string.band_or_freq_required),
                     style = MaterialTheme.typography.bodySmall,
@@ -351,14 +352,15 @@ fun QsoEditScreen(
             }
 
             // freq
+            val freqRequiredError = submitAttempted && satName.isBlank() && freq.isBlank()
             OutlinedTextField(
                 value = freq,
                 onValueChange = { viewModel.onFreqChanged(it) },
                 label = { Text(stringResource(R.string.frequency_mhz)) },
-                isError = (submitAttempted && freq.isBlank()) || freqOutOfBand,
+                isError = freqRequiredError || freqOutOfBand,
                 supportingText = if (freqOutOfBand) {
                     { Text(stringResource(R.string.freq_out_of_band)) }
-                } else if (submitAttempted && freq.isBlank()) {
+                } else if (freqRequiredError) {
                     { Text(stringResource(R.string.required_field)) }
                 } else null,
                 singleLine = true,
@@ -463,7 +465,7 @@ fun QsoEditScreen(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.none)) },
                         onClick = {
-                            viewModel.propMode.value = ""
+                            viewModel.onPropModeChanged("")
                             propModeExpanded = false
                         }
                     )
@@ -480,7 +482,7 @@ fun QsoEditScreen(
                                 }
                             },
                             onClick = {
-                                viewModel.propMode.value = pm.name
+                                viewModel.onPropModeChanged(pm.name)
                                 propModeExpanded = false
                             }
                         )
@@ -510,7 +512,7 @@ fun QsoEditScreen(
                     DropdownMenuItem(
                         text = { Text(stringResource(R.string.none)) },
                         onClick = {
-                            viewModel.satName.value = ""
+                            viewModel.onSatNameChanged("")
                             satExpanded = false
                         }
                     )
@@ -529,7 +531,7 @@ fun QsoEditScreen(
                                 }
                             },
                             onClick = {
-                                viewModel.satName.value = sat.name
+                                viewModel.onSatNameChanged(sat.name)
                                 satExpanded = false
                             }
                         )

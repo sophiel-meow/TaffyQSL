@@ -544,13 +544,15 @@ fun SignOptionsDialog(
                         onClick = { showDateFromPicker = true },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(dateFrom?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_from))
+                        Text(dateFrom?.let { dateFormat.formatDate(it) }
+                            ?: stringResource(R.string.date_from))
                     }
                     OutlinedButton(
                         onClick = { showDateToPicker = true },
                         modifier = Modifier.weight(1f)
                     ) {
-                        Text(dateTo?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.date_to))
+                        Text(dateTo?.let { dateFormat.formatDate(it) }
+                            ?: stringResource(R.string.date_to))
                     }
                 }
                 if (dateFrom != null || dateTo != null) {
@@ -603,7 +605,9 @@ fun QsoRecordCard(
                 .atZone(ZoneOffset.UTC)
                 .withZoneSameInstant(ZoneId.systemDefault())
                 .toLocalTime()
-            "${localTime.hour.toString().padStart(2, '0')}:${localTime.minute.toString().padStart(2, '0')}"
+            "${localTime.hour.toString().padStart(2, '0')}:${
+                localTime.minute.toString().padStart(2, '0')
+            }"
         } else {
             "${utcHour.toString().padStart(2, '0')}:${utcMin.toString().padStart(2, '0')}Z"
         }
@@ -633,7 +637,11 @@ fun QsoRecordCard(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = "${qso.bandName}  ${qso.modeName}",
+                    text = listOfNotNull(
+                        qso.satName.takeIf { it.isNotBlank() },
+                        qso.bandName.takeIf { it.isNotBlank() },
+                        qso.modeName.takeIf { it.isNotBlank() }
+                    ).joinToString("  "),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
