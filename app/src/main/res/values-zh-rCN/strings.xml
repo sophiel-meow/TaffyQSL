@@ -1,14 +1,243 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">TaffyQSL</string>
+
+    <!-- Navigation -->
     <string name="nav_certificates">证书</string>
     <string name="nav_stations">台站</string>
     <string name="nav_logs">日志</string>
     <string name="nav_settings">设置</string>
+
+    <!-- Common -->
     <string name="cancel">取消</string>
     <string name="save">保存</string>
     <string name="delete">删除</string>
     <string name="export">导出</string>
     <string name="close">关闭</string>
     <string name="create">创建</string>
+    <string name="required_field">此字段为必填项</string>
+    <string name="passwords_donot_match">两次密码不一致</string>
+    <string name="file_saved">文件保存成功</string>
+
+    <!-- Certificates -->
+    <string name="no_certificates">未导入证书。\n点击 + 导入 .p12 文件。</string>
+    <string name="import_cert">导入证书</string>
+    <string name="cert_import">导入证书</string>
+    <string name="cert_import_password_title">输入 P12 密码</string>
+    <string name="cert_import_password_message">请输入 .p12 证书文件的密码。</string>
+    <string name="cert_delete_title">删除证书</string>
+    <string name="cert_delete_message">删除 %1$s 的证书？此操作不可撤销，且将移除私钥。</string>
+    <string name="cert_import_success">%1$s 的证书已成功导入。</string>
+    <string name="cert_import_failed">导入失败：%1$s</string>
+    <string name="fingerprint">SHA-256 指纹</string>
+    <string name="email">邮箱</string>
+    <string name="cert_properties">证书属性</string>
+    <string name="cert_export_p12">导出为 .p12 备份</string>
+    <string name="cert_export_title">设置备份密码</string>
+    <string name="cert_export_success">证书已成功导出。</string>
+    <string name="callsign">呼号</string>
+    <string name="holder_name">持有人姓名</string>
+    <string name="dxcc_entity">DXCC 实体</string>
+    <string name="qso_date_range">QSO 有效日期范围</string>
+    <string name="cert_validity">证书有效期</string>
+    <string name="issuer">颁发机构</string>
+    <string name="serial_number">序列号</string>
+    <string name="status">状态</string>
+    <string name="password">密码</string>
+    <string name="confirm_password">确认密码</string>
+
+    <!-- Stations -->
+    <string name="no_stations">未添加台站。\n点击 + 添加台站。</string>
+    <string name="add_station">添加台站</string>
+    <string name="new_station">新建台站</string>
+    <string name="edit_station">编辑台站</string>
+    <string name="station">台站</string>
+    <string name="station_name">台站名称</string>
+    <string name="grid_square">Maidenhead 网格</string>
+    <string name="state_province">省 / 州</string>
+    <string name="county">县 / 区</string>
+    <string name="cq_zone">CQ 分区（1–40）</string>
+    <string name="itu_zone">ITU 分区（1–90）</string>
+    <string name="iota_id">IOTA 编号（如 AS-001）</string>
+    <string name="grid_format_error">网格方格格式有误，应为 AA00 或 AA00aa</string>
+    <string name="no_cert_for_callsign">未找到该呼号的证书，请先导入证书。</string>
+    <string name="select_callsign">从证书中选择呼号</string>
+    <string name="no_certs_import_first">未导入证书，请先导入 .p12 文件。</string>
+    <string name="none">无</string>
+    <string name="station_delete_title">删除台站</string>
+    <string name="station_delete_message">删除台站 \'%1$s\'？已使用该台站签名的记录不受影响。</string>
+    <string name="delete_station">删除台站</string>
+    <string name="delete_station_confirm">删除台站 \'%1$s\'？此操作不可撤销。</string>
+
+    <!-- Logs -->
+    <string name="tab_sign_log">签名日志</string>
+    <string name="tab_adif_files">ADIF 文件</string>
+    <string name="sign_adif_description">选择 ADIF 文件（.adi、.adif）进行签名。签名后可保存或上传至 LoTW。</string>
+    <string name="select_adif_file">选择 ADIF 文件…</string>
+    <string name="no_adif_files">尚无 ADIF 文件。\n点击 + 创建新日志。</string>
+    <string name="new_adif_log">新建 ADIF 日志</string>
+    <string name="new_adif_title">新建 ADIF 日志</string>
+    <string name="log_name">日志名称</string>
+    <string name="rename">重命名</string>
+    <string name="rename_file_title">重命名日志文件</string>
+    <string name="delete_file_title">删除日志文件</string>
+    <string name="delete_file_message">删除日志 \'%1$s\'？</string>
+    <string name="sign_log">签名日志</string>
+    <string name="source_file">源文件</string>
+    <string name="select_station">选择台站</string>
+    <string name="no_stations_available">未配置台站，请先创建台站。</string>
+    <string name="select_station_first">请先选择台站。</string>
+    <string name="no_cert_for_station">未找到该台站呼号对应的证书。</string>
+    <string name="date_filter_optional">日期筛选（可选）</string>
+    <string name="date_from">开始日期</string>
+    <string name="date_to">结束日期</string>
+    <string name="clear_date_filter">清除日期</string>
+    <string name="upload_to_lotw">签名后上传至 LoTW</string>
+    <string name="signing_complete">签名完成</string>
+    <string name="signing_result_total">QSO 总数：%1$d</string>
+    <string name="signing_result_signed">已签名：%1$d</string>
+    <string name="signing_result_duplicates">已跳过（已上传）：%1$d</string>
+    <string name="signing_result_date_filtered">已跳过（日期筛选）：%1$d</string>
+    <string name="signing_result_invalid">已跳过（无效）：%1$d</string>
+    <string name="signing_result_grid_mismatch">已跳过（网格方格不匹配）：%1$d</string>
+    <string name="uploading_to_lotw">正在上传至 LoTW…</string>
+    <string name="btn_upload_to_lotw">上传至 LoTW</string>
+    <string name="upload_error">上传错误：%1$s</string>
+    <string name="upload_response">服务器响应：\n%1$s</string>
+    <string name="save_tq8">保存 .tq8 文件</string>
+    <string name="no_logs">尚未导入日志。\n点击 + 导入 ADIF 文件。</string>
+    <string name="import_adif">导入 ADIF</string>
+    <string name="sign_and_upload">签名并上传</string>
+    <string name="sign">签名</string>
+    <string name="signing_in_progress">正在签名…</string>
+    <string name="signing_failed">签名失败</string>
+
+    <!-- QSO -->
+    <string name="qso_list">QSO 记录</string>
+    <string name="qso">QSO</string>
+    <string name="no_qso_records">无 QSO 记录。\n点击 + 添加。</string>
+    <string name="add_qso">添加 QSO</string>
+    <string name="new_qso">新建 QSO</string>
+    <string name="edit_qso">编辑 QSO</string>
+    <string name="qso_date_utc">UTC 日期</string>
+    <string name="qso_time_utc">UTC 时间</string>
+    <string name="qso_date_local">本地日期</string>
+    <string name="qso_time_local">本地时间</string>
+    <string name="band">频段</string>
+    <string name="mode">模式</string>
+    <string name="submode">子模式（可选）</string>
+    <string name="frequency_mhz">频率（MHz）</string>
+    <string name="rx_frequency_mhz">接收频率（MHz，可选）</string>
+    <string name="rx_band">接收频段（可选）</string>
+    <string name="propagation_mode">传播模式（可选）</string>
+    <string name="satellite">卫星（可选）</string>
+    <string name="delete_qso_title">删除 QSO</string>
+    <string name="delete_qso_message">删除与 %1$s 的 QSO？</string>
+
+    <!-- ADIF Import -->
+    <string name="import_result_title">导入完成</string>
+    <plurals name="import_result_body">
+        <item quantity="other">已导入 %1$d 条 QSO，跳过 %2$d 条无效记录。</item>
+    </plurals>
+    <string name="qso_count">%1$d 条 QSO</string>
+    <string name="import_adif_name_title">日志名称</string>
+    <string name="import_adif_name_hint">输入导入日志的名称</string>
+
+    <!-- QSO List Screen -->
+    <string name="export_adif">导出 ADIF</string>
+    <string name="add_qso_manual">手动添加</string>
+
+    <!-- Quick Add -->
+    <string name="quick_add">快速添加</string>
+    <string name="quick_add_hint">每行一条，需包含呼号、时间以及频率或卫星。</string>
+    <string name="quick_add_empty_hint">在上方输入以解析 QSO</string>
+    <string name="quick_add_save_valid">保存 %1$d 条有效记录</string>
+    <string name="quick_add_save_all">保存 %1$d 条 QSO</string>
+    <plurals name="quick_add_errors_skipped">
+        <item quantity="other">%1$d 条错误将被跳过。</item>
+    </plurals>
+    <string name="quick_add_saved">已保存 %1$d 条 QSO</string>
+    <string name="quick_add_error_no_callsign">缺少呼号</string>
+    <string name="quick_add_error_no_time">缺少时间</string>
+    <string name="quick_add_error_no_freq_or_sat">缺少频率或卫星</string>
+    <string name="select_station_to_sign">选择签名台站</string>
+    <string name="sign_action">签名</string>
+
+    <!-- QSO Edit Screen -->
+    <string name="band_inferred">自动推断：%1$s</string>
+    <string name="band_or_freq_required">频段或频率为必填项</string>
+    <string name="invalid_time_format">时间格式无效（请使用 HHMM 或 HHMMSS）</string>
+    <string name="invalid_callsign_format">呼号格式无效</string>
+    <string name="freq_out_of_band">频率超出所选频段范围</string>
+    <string name="qso_utc_date_time"><![CDATA[UTC 日期和时间]]></string>
+    <string name="qso_local_date_time"><![CDATA[本地日期和时间]]></string>
+
+    <!-- LoTW -->
+    <string name="lotw_no_credentials">未配置 LoTW 凭据</string>
+    <string name="lotw_no_credentials_desc">请在设置中配置 LoTW 用户名和密码。</string>
+    <string name="lotw_go_to_settings">前往设置</string>
+    <string name="lotw_filter_confirmed">已确认</string>
+    <string name="lotw_filter_uploaded">已上传</string>
+    <string name="lotw_filter_any">全部</string>
+    <string name="lotw_filter_own_call">本机呼号</string>
+    <string name="lotw_filter_worked_call">通联呼号</string>
+    <string name="lotw_since_date">起始：%1$s</string>
+    <string name="lotw_since_any">起始：不限</string>
+    <string name="lotw_until_date">截止：%1$s</string>
+    <string name="lotw_until_any">截止：不限</string>
+    <string name="lotw_more_filters">▼ 更多筛选</string>
+    <string name="lotw_less_filters">▲ 收起筛选</string>
+    <string name="lotw_show_dxcc_detail">显示 DXCC / 国家（仅已确认）</string>
+    <string name="lotw_query">查询</string>
+    <string name="lotw_query_hint">设置筛选条件后点击"查询"。</string>
+    <string name="lotw_error_no_credentials">未配置凭据，请前往设置。</string>
+    <string name="lotw_error_auth_failed">错误：用户名或密码不正确。</string>
+    <string name="lotw_error_server">服务器错误（HTTP %1$d）。</string>
+    <string name="lotw_error_network">网络错误，请检查连接后重试。</string>
+    <string name="lotw_no_results">未找到 QSO 记录。</string>
+    <string name="lotw_credentials_dialog_title">LoTW 凭据</string>
+    <string name="lotw_username">用户名</string>
+    <string name="lotw_credentials_clear">清除</string>
+    <string name="lotw_logged_in_as">已登录：%1$s</string>
+
+    <!-- Settings -->
+    <string name="settings">设置</string>
+    <string name="settings_section_general">通用</string>
+    <string name="settings_section_lotw">LoTW</string>
+    <string name="settings_section_storage">存储</string>
+    <string name="settings_section_about">关于</string>
+    <string name="offline_mode">离线模式</string>
+    <string name="offline_mode_desc">禁用网络功能</string>
+    <string name="date_format">日期格式</string>
+    <string name="date_format_desc">选择日期显示格式</string>
+    <string name="settings_language">语言</string>
+    <string name="language_follow_system">跟随系统</string>
+    <string name="language_requires_android_13">需要 Android 13（Tiramisu）或更高版本</string>
+    <string name="use_local_time">使用本地时间</string>
+    <string name="use_local_time_desc">以本地时区显示和输入时间；存储时转换为 UTC</string>
+    <string name="lotw_credentials">LoTW 登录信息</string>
+    <string name="lotw_credentials_desc">配置 LoTW 用户名和密码</string>
+    <string name="clear_cache">清除缓存</string>
+    <string name="clear_cache_desc">删除临时文件和缓存数据</string>
+    <string name="about">关于</string>
+    <string name="about_subtitle">关于此应用</string>
+    <string name="open_source_licenses">开源许可证</string>
+    <string name="licenses_subtitle">第三方库及许可证</string>
+
+    <!-- About -->
+    <string name="about_version">版本 2026-SpringBlossom-a</string>
+    <string name="about_description">
+        一款自由开源、注重隐私的业余无线电日志应用。支持 ADIF 日志管理、QSO 签名与 LoTW 上传，并通过 Android 硬件级安全机制保护您的密钥。
+    </string>
+
+    <!-- Licenses -->
+    <string name="licenses_title">开源许可证</string>
+    <string name="licenses_intro">本应用使用了以下开源库：</string>
+
+    <!-- Debug -->
+    <string name="settings_section_developer">开发者</string>
+    <string name="debug_mode">调试模式</string>
+    <string name="debug_mode_desc">启用开发者测试功能</string>
+    <string name="dxcc_entity_debug">DXCC 实体（调试覆盖）</string>
+    <string name="dxcc_search_hint">搜索 DXCC…</string>
+
 </resources>

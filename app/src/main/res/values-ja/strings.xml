@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Navigation -->
+    <string name="nav_certificates">証明書</string>
+    <string name="nav_stations">局情報</string>
+    <string name="nav_logs">ログ</string>
+    <string name="nav_settings">設定</string>
+
+    <!-- Common -->
+    <string name="cancel">キャンセル</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="export">エクスポート</string>
+    <string name="close">閉じる</string>
+    <string name="create">作成</string>
+    <string name="required_field">このフィールドは必須です</string>
+    <string name="passwords_donot_match">パスワードが一致しません</string>
+    <string name="file_saved">ファイルを保存しました</string>
+
+    <!-- Certificates -->
+    <string name="no_certificates">証明書がインポートされていません。\n+ をタップして .p12 ファイルをインポートしてください。</string>
+    <string name="import_cert">証明書をインポート</string>
+    <string name="cert_import">証明書をインポート</string>
+    <string name="cert_import_password_title">P12 パスワードを入力</string>
+    <string name="cert_import_password_message">.p12 証明書ファイルのパスワードを入力してください。</string>
+    <string name="cert_delete_title">証明書を削除</string>
+    <string name="cert_delete_message">%1$s の証明書を削除しますか？この操作は取り消せず、秘密鍵も削除されます。</string>
+    <string name="cert_import_success">%1$s の証明書をインポートしました。</string>
+    <string name="cert_import_failed">インポート失敗：%1$s</string>
+    <string name="fingerprint">SHA-256 フィンガープリント</string>
+    <string name="email">メールアドレス</string>
+    <string name="cert_properties">証明書の詳細</string>
+    <string name="cert_export_p12">.p12 バックアップとしてエクスポート</string>
+    <string name="cert_export_title">バックアップパスワードを設定</string>
+    <string name="cert_export_success">証明書をエクスポートしました。</string>
+    <string name="callsign">コールサイン</string>
+    <string name="holder_name">所有者名</string>
+    <string name="dxcc_entity">DXCC エンティティ</string>
+    <string name="qso_date_range">QSO 有効期間</string>
+    <string name="cert_validity">証明書の有効期限</string>
+    <string name="issuer">発行機関</string>
+    <string name="serial_number">シリアル番号</string>
+    <string name="status">ステータス</string>
+    <string name="password">パスワード</string>
+    <string name="confirm_password">パスワードを確認</string>
+
+    <!-- Stations -->
+    <string name="no_stations">局が登録されていません。\n+ をタップして局を追加してください。</string>
+    <string name="add_station">局を追加</string>
+    <string name="new_station">新しい局</string>
+    <string name="edit_station">局を編集</string>
+    <string name="station">局</string>
+    <string name="station_name">局名</string>
+    <string name="grid_square">Maidenhead グリッドスクエア</string>
+    <string name="state_province">都道府県 / 州</string>
+    <string name="county">郡 / 区</string>
+    <string name="cq_zone">CQ ゾーン（1～40）</string>
+    <string name="itu_zone">ITU ゾーン（1～90）</string>
+    <string name="iota_id">IOTA ID（例：AS-001）</string>
+    <string name="grid_format_error">グリッドスクエアの形式が無効です。AA00 または AA00aa 形式で入力してください。</string>
+    <string name="no_cert_for_callsign">このコールサインの証明書が見つかりません。先に証明書をインポートしてください。</string>
+    <string name="select_callsign">証明書からコールサインを選択</string>
+    <string name="no_certs_import_first">証明書がインポートされていません。先に .p12 ファイルをインポートしてください。</string>
+    <string name="none">なし</string>
+    <string name="station_delete_title">局を削除</string>
+    <string name="station_delete_message">局 \'%1$s\' を削除しますか？この局で署名された記録には影響しません。</string>
+    <string name="delete_station">局を削除</string>
+    <string name="delete_station_confirm">局 \'%1$s\' を削除しますか？この操作は取り消せません。</string>
+
+    <!-- Logs -->
+    <string name="tab_sign_log">ログを署名</string>
+    <string name="tab_adif_files">ADIF ファイル</string>
+    <string name="sign_adif_description">署名する ADIF ファイル（.adi、.adif）を選択してください。署名後に保存または LoTW へアップロードできます。</string>
+    <string name="select_adif_file">ADIF ファイルを選択…</string>
+    <string name="no_adif_files">ADIF ファイルがありません。\n+ をタップして新しいログを作成してください。</string>
+    <string name="new_adif_log">新しい ADIF ログ</string>
+    <string name="new_adif_title">新しい ADIF ログ</string>
+    <string name="log_name">ログ名</string>
+    <string name="rename">名前を変更</string>
+    <string name="rename_file_title">ログファイル名を変更</string>
+    <string name="delete_file_title">ログファイルを削除</string>
+    <string name="delete_file_message">ログ \'%1$s\' を削除しますか？</string>
+    <string name="sign_log">ログに署名</string>
+    <string name="source_file">ソースファイル</string>
+    <string name="select_station">局を選択</string>
+    <string name="no_stations_available">局が設定されていません。先に局を作成してください。</string>
+    <string name="select_station_first">先に局を選択してください。</string>
+    <string name="no_cert_for_station">この局のコールサインに対応する証明書が見つかりません。</string>
+    <string name="date_filter_optional">日付フィルター（任意）</string>
+    <string name="date_from">開始日</string>
+    <string name="date_to">終了日</string>
+    <string name="clear_date_filter">日付をクリア</string>
+    <string name="upload_to_lotw">署名後に LoTW へアップロード</string>
+    <string name="signing_complete">署名完了</string>
+    <string name="signing_result_total">QSO 合計：%1$d</string>
+    <string name="signing_result_signed">署名済み：%1$d</string>
+    <string name="signing_result_duplicates">スキップ（アップロード済み）：%1$d</string>
+    <string name="signing_result_date_filtered">スキップ（日付フィルター）：%1$d</string>
+    <string name="signing_result_invalid">スキップ（無効）：%1$d</string>
+    <string name="signing_result_grid_mismatch">スキップ（グリッドスクエア不一致）：%1$d</string>
+    <string name="uploading_to_lotw">LoTW へアップロード中…</string>
+    <string name="btn_upload_to_lotw">LoTW へアップロード</string>
+    <string name="upload_error">アップロードエラー：%1$s</string>
+    <string name="upload_response">サーバーの応答：\n%1$s</string>
+    <string name="save_tq8">.tq8 ファイルを保存</string>
+    <string name="no_logs">ログがインポートされていません。\n+ をタップして ADIF ファイルをインポートしてください。</string>
+    <string name="import_adif">ADIF をインポート</string>
+    <string name="sign_and_upload">署名してアップロード</string>
+    <string name="sign">署名</string>
+    <string name="signing_in_progress">署名中…</string>
+    <string name="signing_failed">署名失敗</string>
+
+    <!-- QSO -->
+    <string name="qso_list">QSO 記録</string>
+    <string name="qso">QSO</string>
+    <string name="no_qso_records">QSO 記録がありません。\n+ をタップして追加してください。</string>
+    <string name="add_qso">QSO を追加</string>
+    <string name="new_qso">新しい QSO</string>
+    <string name="edit_qso">QSO を編集</string>
+    <string name="qso_date_utc">UTC 日付</string>
+    <string name="qso_time_utc">UTC 時刻</string>
+    <string name="qso_date_local">ローカル日付</string>
+    <string name="qso_time_local">ローカル時刻</string>
+    <string name="band">バンド</string>
+    <string name="mode">モード</string>
+    <string name="submode">サブモード（任意）</string>
+    <string name="frequency_mhz">周波数（MHz）</string>
+    <string name="rx_frequency_mhz">受信周波数（MHz、任意）</string>
+    <string name="rx_band">受信バンド（任意）</string>
+    <string name="propagation_mode">伝搬モード（任意）</string>
+    <string name="satellite">衛星（任意）</string>
+    <string name="delete_qso_title">QSO を削除</string>
+    <string name="delete_qso_message">%1$s との QSO を削除しますか？</string>
+
+    <!-- ADIF Import -->
+    <string name="import_result_title">インポート完了</string>
+    <plurals name="import_result_body">
+        <item quantity="other">%1$d 件の QSO をインポートしました。%2$d 件の無効なレコードをスキップしました。</item>
+    </plurals>
+    <string name="qso_count">%1$d 件の QSO</string>
+    <string name="import_adif_name_title">ログ名</string>
+    <string name="import_adif_name_hint">インポートするログの名前を入力してください</string>
+
+    <!-- QSO List Screen -->
+    <string name="export_adif">ADIF をエクスポート</string>
+    <string name="add_qso_manual">手動で追加</string>
+
+    <!-- Quick Add -->
+    <string name="quick_add">クイック追加</string>
+    <string name="quick_add_hint">1 行に 1 件。コールサイン・時刻・周波数または衛星が必要です。</string>
+    <string name="quick_add_empty_hint">上に入力して QSO を解析してください</string>
+    <string name="quick_add_save_valid">有効な %1$d 件を保存</string>
+    <string name="quick_add_save_all">%1$d 件の QSO を保存</string>
+    <plurals name="quick_add_errors_skipped">
+        <item quantity="other">%1$d 件のエラーはスキップされます。</item>
+    </plurals>
+    <string name="quick_add_saved">%1$d 件の QSO を保存しました</string>
+    <string name="quick_add_error_no_callsign">コールサインがありません</string>
+    <string name="quick_add_error_no_time">時刻がありません</string>
+    <string name="quick_add_error_no_freq_or_sat">周波数または衛星がありません</string>
+    <string name="select_station_to_sign">署名する局を選択</string>
+    <string name="sign_action">署名</string>
+
+    <!-- QSO Edit Screen -->
+    <string name="band_inferred">自動推定：%1$s</string>
+    <string name="band_or_freq_required">バンドまたは周波数が必要です</string>
+    <string name="invalid_time_format">時刻の形式が無効です（HHMM または HHMMSS を使用してください）</string>
+    <string name="invalid_callsign_format">コールサインの形式が無効です</string>
+    <string name="freq_out_of_band">周波数が選択したバンドの範囲外です</string>
+    <string name="qso_utc_date_time"><![CDATA[UTC 日時]]></string>
+    <string name="qso_local_date_time"><![CDATA[ローカル日時]]></string>
+
+    <!-- LoTW -->
+    <string name="lotw_no_credentials">LoTW の認証情報が未設定です</string>
+    <string name="lotw_no_credentials_desc">設定で LoTW のユーザー名とパスワードを設定してください。</string>
+    <string name="lotw_go_to_settings">設定へ</string>
+    <string name="lotw_filter_confirmed">QSL</string>
+    <string name="lotw_filter_uploaded">アップロード済み</string>
+    <string name="lotw_filter_any">すべて</string>
+    <string name="lotw_filter_own_call">自局コールサイン</string>
+    <string name="lotw_filter_worked_call">交信先コールサイン</string>
+    <string name="lotw_since_date">開始：%1$s</string>
+    <string name="lotw_since_any">開始：指定なし</string>
+    <string name="lotw_until_date">終了：%1$s</string>
+    <string name="lotw_until_any">終了：指定なし</string>
+    <string name="lotw_more_filters">▼ 詳細フィルター</string>
+    <string name="lotw_less_filters">▲ 閉じる</string>
+    <string name="lotw_show_dxcc_detail">DXCC / 国を表示（確認済みのみ）</string>
+    <string name="lotw_query">照会</string>
+    <string name="lotw_query_hint">フィルターを設定して「照会」をタップしてください。</string>
+    <string name="lotw_error_no_credentials">認証情報が未設定です。設定へ移動してください。</string>
+    <string name="lotw_error_auth_failed">エラー：ユーザー名またはパスワードが正しくありません。</string>
+    <string name="lotw_error_server">サーバーエラー（HTTP %1$d）。</string>
+    <string name="lotw_error_network">ネットワークエラーです。接続を確認して再試行してください。</string>
+    <string name="lotw_no_results">QSO 記録が見つかりませんでした。</string>
+    <string name="lotw_credentials_dialog_title">LoTW 認証情報</string>
+    <string name="lotw_username">ユーザー名</string>
+    <string name="lotw_credentials_clear">クリア</string>
+    <string name="lotw_logged_in_as">ログイン済み：%1$s</string>
+
+    <!-- Settings -->
+    <string name="settings">設定</string>
+    <string name="settings_section_general">一般</string>
+    <string name="settings_section_lotw">LoTW</string>
+    <string name="settings_section_storage">ストレージ</string>
+    <string name="settings_section_about">このアプリについて</string>
+    <string name="offline_mode">オフラインモード</string>
+    <string name="offline_mode_desc">ネットワーク機能を無効にする</string>
+    <string name="date_format">日付形式</string>
+    <string name="date_format_desc">日付の表示形式を選択</string>
+    <string name="settings_language">言語</string>
+    <string name="language_follow_system">システムに従う</string>
+    <string name="language_requires_android_13">Android 13（Tiramisu）以降が必要です</string>
+    <string name="use_local_time">ローカル時刻を使用</string>
+    <string name="use_local_time_desc">ローカルタイムゾーンで時刻を表示・入力します。保存時は UTC に変換されます。</string>
+    <string name="lotw_credentials">LoTW ログイン情報</string>
+    <string name="lotw_credentials_desc">LoTW のユーザー名とパスワードを設定</string>
+    <string name="clear_cache">キャッシュをクリア</string>
+    <string name="clear_cache_desc">一時ファイルとキャッシュデータを削除する</string>
+    <string name="about">このアプリについて</string>
+    <string name="about_subtitle">アプリの情報</string>
+    <string name="open_source_licenses">オープンソースライセンス</string>
+    <string name="licenses_subtitle">サードパーティライブラリとライセンス</string>
+
+    <!-- About -->
+    <string name="about_version">バージョン 2026-SpringBlossom-a</string>
+    <string name="about_description">
+        プライバシーを重視した、自由でオープンソースのアマチュア無線ログアプリです。ADIFログ管理、QSO署名、LoTWへのアップロードに対応し、Androidのハードウェアセキュリティで鍵を安全に保護します。
+    </string>
+
+    <!-- Licenses -->
+    <string name="licenses_title">オープンソースライセンス</string>
+    <string name="licenses_intro">このアプリは以下のオープンソースライブラリを使用しています：</string>
+
+    <!-- Debug -->
+    <string name="settings_section_developer">開発者</string>
+    <string name="debug_mode">デバッグモード</string>
+    <string name="debug_mode_desc">テスト用の開発者機能を有効にする</string>
+    <string name="dxcc_entity_debug">DXCC エンティティ（デバッグ上書き）</string>
+    <string name="dxcc_search_hint">DXCC を検索…</string>
+
+</resources>

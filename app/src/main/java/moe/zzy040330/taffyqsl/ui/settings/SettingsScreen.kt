@@ -134,7 +134,8 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             val languageNames = mapOf(
                 AppLanguage.SYSTEM to stringResource(R.string.language_follow_system),
                 AppLanguage.ENGLISH to "English",
-                AppLanguage.CHINESE_SIMPLIFIED to "中文 (简体)"
+                AppLanguage.CHINESE_SIMPLIFIED to "中文 (简体)",
+                AppLanguage.JAPANESE to "日本語"
             )
             Box {
                 SettingsItem(

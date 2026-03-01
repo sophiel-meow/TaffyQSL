@@ -25,7 +25,8 @@ enum class DateFormatOption(
 enum class AppLanguage(val tag: String) {
     SYSTEM(""),
     ENGLISH("en"),
-    CHINESE_SIMPLIFIED("zh-CN");
+    CHINESE_SIMPLIFIED("zh-CN"),
+    JAPANESE("ja");
 }
 
 class AppPreferences private constructor(context: Context) {
