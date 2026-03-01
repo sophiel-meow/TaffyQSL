@@ -490,7 +490,7 @@ class QuickAddViewModel(
         const val ERR_NO_FREQ_OR_SAT = "no_freq_or_sat"
 
         private val CALLSIGN_REGEX = Regex(
-            "^([A-Z0-9]{1,4}/)?[A-Z0-9]{1,3}[0-9][A-Z]{1,5}(/[A-Z0-9]{1,4})?\$",
+            "\b(?:[A-Z0-9]{1,4}/)?[A-Z]{1,3}[0-9][A-Z]{1,4}(?:/[A-Z0-9]+)?\b",  // strict
             RegexOption.IGNORE_CASE
         )
         private val TIME_COLON_REGEX = Regex("^(\\d{1,2}):(\\d{2})\$")

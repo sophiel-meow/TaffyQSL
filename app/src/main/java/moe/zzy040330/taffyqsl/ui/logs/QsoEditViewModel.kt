@@ -354,9 +354,9 @@ class QsoEditViewModel(
     }
 
     companion object {
-        // FIXME: a robust callsign regex
+        // a less-strict regex for handling special callsigns.
         val CALLSIGN_REGEX =
-            Regex("""(?i)\b(?:[A-Z0-9]+/)?[A-Z]{1,3}[0-9][A-Z0-9]{0,4}(?:/[A-Z0-9]+)?\b""")
+            Regex("""^[A-Z0-9]+(?:/[A-Z0-9]+)*$""")
 
         fun parseTimeInput(input: String): LocalTime? {
             val digits = input.filter { it.isDigit() }

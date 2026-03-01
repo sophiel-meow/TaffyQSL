@@ -155,7 +155,7 @@ class CertificateManager(private val context: Context) {
             if (cn != null) {
 
                 // Check if CN contains callsign pattern
-                // TODO: replace with a robust regex
+                // Will this contains pre/postfix?
                 val callsignPattern = Regex("\\b([A-Z0-9]{1,3}[0-9][A-Z0-9]{0,3}[A-Z])\\b")
                 val match = callsignPattern.find(cn)
                 if (match != null) {
