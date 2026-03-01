@@ -177,7 +177,32 @@
     <string name="qso_local_date_time"><![CDATA[Local Date & Time]]></string>
 
     <!-- LoTW -->
-    <string name="lotw_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
+    <string name="lotw_no_credentials">LoTW Credentials Not Set</string>
+    <string name="lotw_no_credentials_desc">Configure your LoTW username and password in Settings.</string>
+    <string name="lotw_go_to_settings">Go to Settings</string>
+    <string name="lotw_filter_confirmed">QSL</string>
+    <string name="lotw_filter_uploaded">Uploaded</string>
+    <string name="lotw_filter_any">Any</string>
+    <string name="lotw_filter_own_call">Own Callsign</string>
+    <string name="lotw_filter_worked_call">Worked Callsign</string>
+    <string name="lotw_since_date">Since: %1$s</string>
+    <string name="lotw_since_any">Since: Any</string>
+    <string name="lotw_until_date">Until: %1$s</string>
+    <string name="lotw_until_any">Until: Any</string>
+    <string name="lotw_more_filters">▼ More Filters</string>
+    <string name="lotw_less_filters">▲ Less Filters</string>
+    <string name="lotw_show_dxcc_detail">Show DXCC / Country (Confirmed only)</string>
+    <string name="lotw_query">Query</string>
+    <string name="lotw_query_hint">Enter filters and tap Query.</string>
+    <string name="lotw_error_no_credentials">No credentials configured. Please go to Settings.</string>
+    <string name="lotw_error_auth_failed">Error: Username or password incorrect.</string>
+    <string name="lotw_error_server">Server error (HTTP %1$d).</string>
+    <string name="lotw_error_network">Network error. Please check your connection and try again.</string>
+    <string name="lotw_no_results">No QSOs found.</string>
+    <string name="lotw_credentials_dialog_title">LoTW Credentials</string>
+    <string name="lotw_username">Username</string>
+    <string name="lotw_credentials_clear">Clear</string>
+    <string name="lotw_logged_in_as">Logged in as: %1$s</string>
 
     <!-- Settings -->
     <string name="settings">Settings</string>

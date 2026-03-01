@@ -166,7 +166,18 @@ fun TaffyQslApp() {
                 LogsScreen(innerPadding, navController)
             }
             composable(Screen.Lotw.route) {
-                LotwScreen(innerPadding)
+                LotwScreen(
+                    innerPadding = innerPadding,
+                    onNavigateToSettings = {
+                        navController.navigate(Screen.Settings.route) {
+                            popUpTo(navController.graph.findStartDestination().id) {
+                                saveState = true
+                            }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    }
+                )
             }
             composable(Screen.Settings.route) {
                 SettingsScreen(innerPadding, navController)

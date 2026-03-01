@@ -1,29 +1,37 @@
 package moe.zzy040330.taffyqsl.ui.settings
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.CloudOff
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.filled.VpnKey
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material.icons.filled.BugReport
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,27 +41,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.BuildConfig
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.AppPreferences
 import moe.zzy040330.taffyqsl.data.DateFormatOption
+import moe.zzy040330.taffyqsl.data.lotw.LotwCredentialManager
 
 @Composable
 fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
-//    var offlineMode by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     val prefs = remember { AppPreferences.getInstance(context) }
+    val credentialManager = remember { LotwCredentialManager(context) }
+
     var debugMode by remember {
         mutableStateOf(if (BuildConfig.DEBUG) prefs.isDebugMode else false)
     }
     var dateFormat by remember { mutableStateOf(prefs.dateFormat) }
     var dateFormatExpanded by remember { mutableStateOf(false) }
     var useLocalTime by remember { mutableStateOf(prefs.useLocalTime) }
+    var credUsername by remember {
+        mutableStateOf(credentialManager.loadCredentials()?.first ?: "")
+    }
+    var showLotwDialog by remember { mutableStateOf(false) }
 
-    // TODO: dummy items here
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -63,15 +77,6 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
         item {
             SettingsSectionHeader(stringResource(R.string.settings_section_general))
         }
-//        item {
-//            SettingsItemWithSwitch(
-//                icon = Icons.Default.CloudOff,
-//                title = stringResource(R.string.offline_mode),
-//                subtitle = stringResource(R.string.offline_mode_desc),
-//                checked = offlineMode,
-//                onCheckedChange = { offlineMode = it }
-//            )
-//        }
 
         item {
             SettingsItemWithSwitch(
@@ -127,8 +132,12 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             SettingsItem(
                 icon = Icons.Default.VpnKey,
                 title = stringResource(R.string.lotw_credentials),
-                subtitle = stringResource(R.string.lotw_credentials_desc),
-                onClick = { /* TODO: Open LoTW credentials dialog */ }
+                subtitle = if (credUsername.isNotEmpty()) {
+                    stringResource(R.string.lotw_logged_in_as, credUsername)
+                } else {
+                    stringResource(R.string.lotw_credentials_desc)
+                },
+                onClick = { showLotwDialog = true }
             )
         }
 
@@ -136,21 +145,6 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         }
 
-//        item {
-//            SettingsSectionHeader(stringResource(R.string.settings_section_storage))
-//        }
-//        item {
-//            SettingsItem(
-//                icon = Icons.Default.Delete,
-//                title = stringResource(R.string.clear_cache),
-//                subtitle = stringResource(R.string.clear_cache_desc),
-//                onClick = { /* TODO: Clear cache */ }
-//            )
-//        }
-
-//        item {
-//            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-//        }
 
         // TODO: backup & restore
         // TODO: pin & biometric
@@ -200,6 +194,98 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             }
         }
     }
+
+    if (showLotwDialog) {
+        LotwCredentialsDialog(
+            credentialManager = credentialManager,
+            hasCredentials = credUsername.isNotEmpty(),
+            onDismiss = { showLotwDialog = false },
+            onSaved = { username ->
+                credUsername = username
+                showLotwDialog = false
+            },
+            onCleared = {
+                credUsername = ""
+                showLotwDialog = false
+            }
+        )
+    }
+}
+
+@Composable
+private fun LotwCredentialsDialog(
+    credentialManager: LotwCredentialManager,
+    hasCredentials: Boolean,
+    onDismiss: () -> Unit,
+    onSaved: (username: String) -> Unit,
+    onCleared: () -> Unit
+) {
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var showPassword by remember { mutableStateOf(false) }
+    var usernameError by remember { mutableStateOf(false) }
+    var passwordError by remember { mutableStateOf(false) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.lotw_credentials_dialog_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = username,
+                    onValueChange = { username = it; usernameError = false },
+                    label = { Text(stringResource(R.string.lotw_username)) },
+                    isError = usernameError,
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = password,
+                    onValueChange = { password = it; passwordError = false },
+                    label = { Text(stringResource(R.string.password)) },
+                    isError = passwordError,
+                    visualTransformation = if (showPassword) VisualTransformation.None
+                    else PasswordVisualTransformation(),
+                    singleLine = true,
+                    trailingIcon = {
+                        IconButton(onClick = { showPassword = !showPassword }) {
+                            Icon(
+                                imageVector = if (showPassword) Icons.Default.VisibilityOff
+                                else Icons.Default.Visibility,
+                                contentDescription = null
+                            )
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (username.isBlank()) { usernameError = true; return@TextButton }
+                if (password.isBlank()) { passwordError = true; return@TextButton }
+                credentialManager.saveCredentials(username, password)
+                onSaved(username)
+            }) {
+                Text(stringResource(R.string.save))
+            }
+        },
+        dismissButton = {
+            Row {
+                if (hasCredentials) {
+                    TextButton(onClick = {
+                        credentialManager.clearCredentials()
+                        onCleared()
+                    }) {
+                        Text(stringResource(R.string.lotw_credentials_clear))
+                    }
+                }
+                TextButton(onClick = onDismiss) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        }
+    )
 }
 
 @Composable
