@@ -1,0 +1,108 @@
+[
+  {
+    "name": "ARISS",
+    "aliases": [
+      "ISS"
+    ],
+    "downlinkFreqMhz": 437.800,
+    "uplinkFreqMhz": 145.990,
+    "mode": "FM"
+  },
+  {
+    "name": "SO-50",
+    "aliases": [
+      "SO50"
+    ],
+    "downlinkFreqMhz": 436.795,
+    "uplinkFreqMhz": 145.850,
+    "mode": "FM"
+  },
+  {
+    "name": "AO-91",
+    "aliases": [
+      "AO91",
+      "Fox-1B",
+      "Fox1B",
+      "RadFXSat"
+    ],
+    "downlinkFreqMhz": 145.960,
+    "uplinkFreqMhz": 435.250,
+    "mode": "FM"
+  },
+  {
+    "name": "AO-92",
+    "aliases": [
+      "AO92",
+      "Fox-1D",
+      "Fox1D"
+    ],
+    "downlinkFreqMhz": 145.880,
+    "uplinkFreqMhz": 435.350,
+    "mode": "FM"
+  },
+  {
+    "name": "AO-109",
+    "aliases": [
+      "AO109",
+      "RadFXSat-2",
+      "RadFXSat2"
+    ],
+    "downlinkFreqMhz": 145.875,
+    "uplinkFreqMhz": 435.765,
+    "mode": "FM"
+  },
+  {
+    "name": "PO-101",
+    "aliases": [
+      "PO101",
+      "DIWATA-2",
+      "DIWATA2"
+    ],
+    "downlinkFreqMhz": 437.500,
+    "uplinkFreqMhz": 145.900,
+    "mode": "FM"
+  },
+  {
+    "name": "AO-123",
+    "aliases": [
+      "AO123"
+    ],
+    "uplinkFreqMhz": 145.850,
+    "downlinkFreqMhz": 435.400,
+    "mode": "FM"
+  },
+  {
+    "name": "SO-124",
+    "aliases": [
+      "SO124"
+    ],
+    "uplinkFreqMhz": 145.925,
+    "downlinkFreqMhz": 436.888,
+    "mode": "FM"
+  },
+  {
+    "name": "SO-125",
+    "aliases": [
+      "SO125"
+    ],
+    "uplinkFreqMhz": 145.875,
+    "downlinkFreqMhz": 436.666,
+    "mode": "FM"
+  },
+  {
+    "name": "RS-44",
+    "aliases": [
+      "RS44"
+    ],
+    "uplinkFreqMhz": 145.965,
+    "downlinkFreqMhz": 436.666
+  },
+  {
+    "name": "QO-100",
+    "aliases": [
+      "QO100"
+    ],
+    "uplinkFreqMhz": 2405.500,
+    "downlinkFreqMhz": 10495
+  }
+]

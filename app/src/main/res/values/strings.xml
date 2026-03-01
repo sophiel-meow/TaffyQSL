@@ -145,6 +145,23 @@
 
     <!-- QSO List Screen -->
     <string name="export_adif">Export ADIF</string>
+    <string name="add_qso_manual">Add Manually</string>
+
+    <!-- Quick Add -->
+    <string name="quick_add">Quick Add</string>
+    <string name="quick_add_hint">One entry per line. Callsign, time, and frequency or satellite are required.</string>
+    <string name="quick_add_placeholder">BG4KNN 12:30 14.074 FT8</string>
+    <string name="quick_add_empty_hint">Start typing above to parse QSOs</string>
+    <string name="quick_add_save_valid">Save %1$d valid</string>
+    <string name="quick_add_save_all">Save %1$d QSOs</string>
+    <plurals name="quick_add_errors_skipped">
+        <item quantity="one">%1$d error will be skipped.</item>
+        <item quantity="other">%1$d errors will be skipped.</item>
+    </plurals>
+    <string name="quick_add_saved">Saved %1$d QSOs</string>
+    <string name="quick_add_error_no_callsign">Missing callsign</string>
+    <string name="quick_add_error_no_time">Missing time</string>
+    <string name="quick_add_error_no_freq_or_sat">Missing frequency or satellite</string>
     <string name="select_station_to_sign">Select Station to Sign</string>
     <string name="sign_action">Sign</string>
 

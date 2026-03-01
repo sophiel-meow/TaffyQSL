@@ -10,12 +10,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,6 +55,8 @@ fun QsoListScreen(
     var deleteQsoId by remember { mutableStateOf<Long?>(null) }
     var showSignDialog by remember { mutableStateOf(false) }
     var pendingOutputFile by remember { mutableStateOf<File?>(null) }
+    var showQuickAdd by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     // ******** Launchers ********
     val saveTq8Launcher = rememberLauncherForActivityResult(
@@ -316,14 +321,45 @@ fun QsoListScreen(
                 }
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("qso_edit/${viewModel.fileName}/0") }
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Icon(Icons.Default.Add, contentDescription = stringResource(R.string.add_qso))
+                SmallFloatingActionButton(
+                    onClick = { navController.navigate("qso_edit/${viewModel.fileName}/0") },
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                ) {
+                    Icon(
+                        Icons.Default.Edit,
+                        contentDescription = stringResource(R.string.add_qso_manual)
+                    )
+                }
+                FloatingActionButton(onClick = { showQuickAdd = true }) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(R.string.quick_add)
+                    )
+                }
             }
         }
     ) { padding ->
+        // Quick add sheet
+        if (showQuickAdd) {
+            val savedMessage = stringResource(R.string.quick_add_saved)
+            QuickAddSheet(
+                fileName = viewModel.fileName,
+                onDismiss = { showQuickAdd = false },
+                onSaved = { count ->
+                    viewModel.viewModelScope.launch {
+                        snackbarHostState.showSnackbar(savedMessage.format(count))
+                    }
+                }
+            )
+        }
+
         if (qsos.isEmpty()) {
             Box(
                 modifier = Modifier

@@ -13,6 +13,7 @@ class ConfigRepository private constructor(context: Context) {
     val dxccEntities: List<DxccEntity> by lazy { loadDxccEntities() }
     val satellites: List<Satellite> by lazy { loadSatellites() }
     val propModes: List<PropMode> by lazy { loadPropModes() }
+    val satelliteInfoList: List<SatelliteInfo> by lazy { loadSatelliteInfo() }
 
     // ADIF mode & submode to TQSL mode
     val adifModeMap: Map<Pair<String, String>, String> by lazy { loadAdifModeMap() }
@@ -242,6 +243,41 @@ class ConfigRepository private constructor(context: Context) {
         bands.firstOrNull { freqMhz >= it.freqLow && freqMhz <= it.freqHigh }?.name
 
     fun dxccById(id: Int): DxccEntity? = dxccEntities.firstOrNull { it.arrlId == id }
+
+    /**
+     * Find a SatelliteInfo by name or alias.
+     * Matching is case-insensitive and ignores hyphens and underscores.
+     * e.g. "SO50", "SO-50", "so50" all resolve to SO-50.
+     */
+    fun findSatelliteByAlias(token: String): SatelliteInfo? {
+        val normalized = token.uppercase().replace("-", "").replace("_", "")
+        return satelliteInfoList.firstOrNull { sat ->
+            sat.name.uppercase().replace("-", "").replace("_", "") == normalized ||
+                sat.aliases.any { alias ->
+                    alias.uppercase().replace("-", "").replace("_", "") == normalized
+                }
+        }
+    }
+
+    private fun loadSatelliteInfo(): List<SatelliteInfo> {
+        val arr = JSONArray(readJson("satellites_info.json"))
+        val result = mutableListOf<SatelliteInfo>()
+        for (i in 0 until arr.length()) {
+            val obj = arr.getJSONObject(i)
+            val aliasArr = obj.getJSONArray("aliases")
+            val aliases = (0 until aliasArr.length()).map { aliasArr.getString(it) }
+            result.add(
+                SatelliteInfo(
+                    name = obj.getString("name"),
+                    aliases = aliases,
+                    downlinkFreqMhz = obj.getDouble("downlinkFreqMhz"),
+                    uplinkFreqMhz = obj.getDouble("uplinkFreqMhz"),
+                    mode = obj.optString("mode", "")
+                )
+            )
+        }
+        return result
+    }
 
     companion object {
         @Volatile
