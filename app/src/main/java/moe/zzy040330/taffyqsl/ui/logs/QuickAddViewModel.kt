@@ -490,15 +490,15 @@ class QuickAddViewModel(
         const val ERR_NO_FREQ_OR_SAT = "no_freq_or_sat"
 
         private val CALLSIGN_REGEX = Regex(
-            "\b(?:[A-Z0-9]{1,4}/)?[A-Z]{1,3}[0-9][A-Z]{1,4}(?:/[A-Z0-9]+)?\b",  // strict
+            "^([A-Z0-9]{1,4}/)?[A-Z0-9]{1,3}[0-9][A-Z]{1,5}(/[A-Z0-9]{1,4})?\$",    // strict
             RegexOption.IGNORE_CASE
         )
         private val TIME_COLON_REGEX = Regex("^(\\d{1,2}):(\\d{2})\$")
         private val FREQ_UNIT_REGEX = Regex(
-            "^(\\d+\\.?\\d*)(kHz|MHz|GHz|k|m|g)\$", RegexOption.IGNORE_CASE
+            "^(\\d+\\.?\\d*)(kHz|MHz|GHz|k|m|g)$", RegexOption.IGNORE_CASE
         )
-        private val FULL_DATE_REGEX = Regex("^(\\d{4})[/-](\\d{1,2})[/-](\\d{1,2})\$")
-        private val SHORT_DATE_REGEX = Regex("^(\\d{1,2})[/-](\\d{1,2})\$")
+        private val FULL_DATE_REGEX = Regex("^(\\d{4})[/-](\\d{1,2})[/-](\\d{1,2})$")
+        private val SHORT_DATE_REGEX = Regex("^(\\d{1,2})[/-](\\d{1,2})$")
 
         fun factory(app: Application, fileName: String) =
             object : ViewModelProvider.Factory {
