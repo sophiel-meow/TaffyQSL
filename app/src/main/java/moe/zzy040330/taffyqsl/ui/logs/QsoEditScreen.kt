@@ -193,7 +193,11 @@ fun QsoEditScreen(
 
             // date & time
             Text(
-                text = "UTC Date & Time",
+                text = if (useLocalTime) {
+                    stringResource(R.string.qso_local_date_time)
+                } else {
+                    stringResource(R.string.qso_utc_date_time)
+                },
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.primary
             )
@@ -206,7 +210,13 @@ fun QsoEditScreen(
                     onClick = { showDatePicker = true },
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(date?.let { dateFormat.formatDate(it) } ?: stringResource(R.string.qso_date))
+                    Text(date?.let { dateFormat.formatDate(it) }
+                        ?: if (useLocalTime) {
+                            stringResource(R.string.qso_date_local)
+                        } else {
+                            stringResource(R.string.qso_date_utc)
+                        }
+                    )
                 }
 
                 // TODO: change here to support seconds.
@@ -220,7 +230,13 @@ fun QsoEditScreen(
                             .withZoneSameInstant(ZoneId.systemDefault())
                             .toLocalTime()
                     } else time
-                    Text(displayTime?.toString() ?: stringResource(R.string.field_time))
+                    Text(
+                        displayTime?.toString() ?: if (useLocalTime) {
+                            stringResource(R.string.qso_time_local)
+                        } else {
+                            stringResource(R.string.qso_time_utc)
+                        }
+                    )
                 }
             }
 

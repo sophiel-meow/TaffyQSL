@@ -120,8 +120,10 @@
     <string name="add_qso">Add QSO</string>
     <string name="new_qso">New QSO</string>
     <string name="edit_qso">Edit QSO</string>
-    <string name="qso_date">UTC Date</string>
+    <string name="qso_date_utc">UTC Date</string>
     <string name="qso_time_utc">UTC Time</string>
+    <string name="qso_date_local">Local Date</string>
+    <string name="qso_time_local">Local Time</string>
     <string name="band">Band</string>
     <string name="mode">Mode</string>
     <string name="submode">Submode (optional)</string>
@@ -166,12 +168,13 @@
     <string name="sign_action">Sign</string>
 
     <!-- QSO Edit Screen -->
-    <string name="field_time">UTC Time</string>
     <string name="band_inferred">Auto-inferred: %1$s</string>
     <string name="band_or_freq_required">Band or frequency is required</string>
     <string name="invalid_time_format">Invalid time format (use HHMM or HHMMSS)</string>
     <string name="invalid_callsign_format">Invalid callsign format</string>
     <string name="freq_out_of_band">Frequency is outside the selected band\'s range</string>
+    <string name="qso_utc_date_time"><![CDATA[UTC Date & Time]]></string>
+    <string name="qso_local_date_time"><![CDATA[Local Date & Time]]></string>
 
     <!-- LoTW -->
     <string name="lotw_placeholder">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</string>
