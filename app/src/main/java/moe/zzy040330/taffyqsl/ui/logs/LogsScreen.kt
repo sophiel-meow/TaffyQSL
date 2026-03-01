@@ -41,7 +41,6 @@ import moe.zzy040330.taffyqsl.domain.model.StationLocation
 import java.io.File
 import java.time.LocalDate
 
-// TODO: add lotw query support: https://lotw.arrl.org/lotw-help/developer-query-qsos-qsls/
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogsScreen(

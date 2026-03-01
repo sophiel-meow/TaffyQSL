@@ -5,11 +5,11 @@
     <string name="nav_certificates">Certificates</string>
     <string name="nav_stations">Stations</string>
     <string name="nav_logs">Logs</string>
-    <string name="nav_lotw">LoTW</string>
+    <string name="nav_lotw" translatable="false">LoTW</string>
     <string name="nav_settings">Settings</string>
 
     <!-- Common -->
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
     <string name="delete">Delete</string>
@@ -214,6 +214,9 @@
     <string name="offline_mode_desc">Disable network features</string>
     <string name="date_format">Date Format</string>
     <string name="date_format_desc">Choose date display format</string>
+    <string name="settings_language">Language</string>
+    <string name="language_follow_system">Follow System</string>
+    <string name="language_requires_android_13">Requires Android 13 (Tiramisu) or later</string>
     <string name="use_local_time">Use Local Time</string>
     <string name="use_local_time_desc">Show and enter times in local timezone; stored as UTC</string>
     <string name="lotw_credentials">LoTW Login Information</string>

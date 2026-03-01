@@ -22,6 +22,12 @@ enum class DateFormatOption(
     fun preview(): String = formatDate(LocalDate.of(2026, 12, 30))
 }
 
+enum class AppLanguage(val tag: String) {
+    SYSTEM(""),
+    ENGLISH("en"),
+    CHINESE_SIMPLIFIED("zh-CN");
+}
+
 class AppPreferences private constructor(context: Context) {
 
     private val prefs = context.getSharedPreferences("taffyqsl_prefs", Context.MODE_PRIVATE)

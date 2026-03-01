@@ -1,5 +1,10 @@
 package moe.zzy040330.taffyqsl.ui.settings
 
+import android.annotation.SuppressLint
+import android.app.LocaleManager
+import android.content.Context
+import android.os.Build
+import android.os.LocaleList
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BugReport
 import androidx.compose.material.icons.filled.CalendarToday
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
@@ -38,6 +44,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -47,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import moe.zzy040330.taffyqsl.BuildConfig
 import moe.zzy040330.taffyqsl.R
+import moe.zzy040330.taffyqsl.data.AppLanguage
 import moe.zzy040330.taffyqsl.data.AppPreferences
 import moe.zzy040330.taffyqsl.data.DateFormatOption
 import moe.zzy040330.taffyqsl.data.lotw.LotwCredentialManager
@@ -62,6 +70,9 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
     }
     var dateFormat by remember { mutableStateOf(prefs.dateFormat) }
     var dateFormatExpanded by remember { mutableStateOf(false) }
+    val supportsPerAppLanguage = Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+    var languageExpanded by remember { mutableStateOf(false) }
+    var currentLanguage by remember { mutableStateOf(readCurrentAppLanguage(context)) }
     var useLocalTime by remember { mutableStateOf(prefs.useLocalTime) }
     var credUsername by remember {
         mutableStateOf(credentialManager.loadCredentials()?.first ?: "")
@@ -118,8 +129,44 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
         }
 
         // TODO: dark & light theme
-        // TODO: i18n
 
+        item {
+            val languageNames = mapOf(
+                AppLanguage.SYSTEM to stringResource(R.string.language_follow_system),
+                AppLanguage.ENGLISH to "English",
+                AppLanguage.CHINESE_SIMPLIFIED to "中文 (简体)"
+            )
+            Box {
+                SettingsItem(
+                    icon = Icons.Default.Language,
+                    title = stringResource(R.string.settings_language),
+                    subtitle = if (!supportsPerAppLanguage) {
+                        stringResource(R.string.language_requires_android_13)
+                    } else {
+                        languageNames[currentLanguage] ?: ""
+                    },
+                    enabled = supportsPerAppLanguage,
+                    onClick = { languageExpanded = true }
+                )
+                if (supportsPerAppLanguage) {
+                    DropdownMenu(
+                        expanded = languageExpanded,
+                        onDismissRequest = { languageExpanded = false }
+                    ) {
+                        AppLanguage.entries.forEach { lang ->
+                            DropdownMenuItem(
+                                text = { Text(languageNames[lang] ?: "") },
+                                onClick = {
+                                    currentLanguage = lang
+                                    languageExpanded = false
+                                    applyAppLanguage(context, lang)
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
 
         item {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
@@ -303,10 +350,13 @@ private fun SettingsItem(
     icon: ImageVector,
     title: String,
     subtitle: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    enabled: Boolean = true
 ) {
     ListItem(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier
+            .then(if (!enabled) Modifier.alpha(0.38f) else Modifier)
+            .clickable(enabled = enabled, onClick = onClick),
         headlineContent = { Text(title) },
         supportingContent = { Text(subtitle) },
         leadingContent = {
@@ -324,6 +374,23 @@ private fun SettingsItem(
             )
         }
     )
+}
+
+/** Returns the currently active per-app language, or SYSTEM if not set / API < 33. */
+private fun readCurrentAppLanguage(context: Context): AppLanguage {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return AppLanguage.SYSTEM
+    val locales = context.getSystemService(LocaleManager::class.java).applicationLocales
+    if (locales.isEmpty) return AppLanguage.SYSTEM
+    val tag = locales[0].toLanguageTag()
+    return AppLanguage.entries.find { it.tag == tag } ?: AppLanguage.SYSTEM
+}
+
+/** Applies the selected language via LocaleManager (API 33+). No-op on older APIs. */
+private fun applyAppLanguage(context: Context, lang: AppLanguage) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    context.getSystemService(LocaleManager::class.java).applicationLocales =
+        if (lang.tag.isEmpty()) LocaleList.getEmptyLocaleList()
+        else LocaleList.forLanguageTags(lang.tag)
 }
 
 @Composable

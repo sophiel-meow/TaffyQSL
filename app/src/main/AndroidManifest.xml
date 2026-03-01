@@ -12,7 +12,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.TaffyQsl">
+        android:theme="@style/Theme.TaffyQsl"
+        android:localeConfig="@xml/locale_config">
 
         <activity
             android:name=".MainActivity"
