@@ -1,11 +1,36 @@
-# ![TaffyQSL Icon](TaffyQSL.svg) TaffyQSL
+<div align="center">
+
+# TaffyQSL
+
+<p align="center">
+  <img src="taffyQSL_noblack.svg" alt="Taffy QSL icon" style="width: 192px" />
+</p>
+
+<p><br/></p>
+
+
+<p align="center">
+  <a href="https://github.com/sophiel-meow/TaffyQSL/releases/latest">
+    <img src="https://img.shields.io/badge/Download-APK-brightgreen?style=for-the-badge&logo=android" alt="Download APK">
+  </a>
+</p>
+
+  [![license](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE) 
+  [![kotlin](https://img.shields.io/badge/Kotlin-2.3-orange.svg)](https://kotlinlang.org) 
+  [![android](https://img.shields.io/badge/Android-16-brightgreen.svg)](https://developer.android.com)
+
+
+</div>
+
+---
+
+
 
 TaffyQSL is a 100% free, libre, and privacy-respecting amateur radio logbook for Android.  
 It supports ADIF file management, QSO signing, and LoTW integration, with **hardware-backed key protection** via the Android Keystore.  
 
 Designed for amateur radio operators who value privacy and security, TaffyQSL keeps your certificates and logs safely on your device.
 
----
 
 ## Features
 
@@ -16,7 +41,6 @@ Designed for amateur radio operators who value privacy and security, TaffyQSL ke
 - Satellite and DXCC entity support  
 - Customizable date and time display formats  
 
----
 
 ## Privacy & Security
 
@@ -26,7 +50,6 @@ Designed for amateur radio operators who value privacy and security, TaffyQSL ke
 - **100% free & open-source**  
 - Designed to protect your privacy while interacting with LoTW  
 
----
 
 ## Installation
 
@@ -34,7 +57,6 @@ Designed for amateur radio operators who value privacy and security, TaffyQSL ke
 - Download the latest APK from the [Releases](https://github.com/sophiel-meow/TaffyQSL/releases) page  
 - F-Droid release will be available soon
 
----
 
 ## Build from Source
 
@@ -52,7 +74,6 @@ cd TaffyQSL
 * Latest Android Studio
 * Minimum SDK 30
 
----
 
 ## License
 
@@ -60,7 +81,6 @@ TaffyQSL is licensed under the **GNU General Public License v3.0**.
 Not affiliated with ARRL or LoTW.
 All trademarks belong to their respective owners.
 
----
 
 ## Disclaimer
 
@@ -70,7 +90,6 @@ All trademarks belong to their respective owners.
 * TaffyQSL is an independent project and is not endorsed by ARRL.
 * Hardware-backed encryption depends on your device's capabilities
 
----
 
 ## Contributing
 
@@ -80,7 +99,6 @@ Contributions are welcome!
 * Pull requests are accepted for bug fixes and improvements
 * Discussions, issues, and contributions are welcome in **English (preferred), Chinese, or Japanese**
 
----
 
 ## TODO
 
