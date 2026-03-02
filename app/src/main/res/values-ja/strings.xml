@@ -224,7 +224,6 @@
     <string name="licenses_subtitle">サードパーティライブラリとライセンス</string>
 
     <!-- About -->
-    <string name="about_version">バージョン 2026-SpringBlossom-a</string>
     <string name="about_description">
         プライバシーを重視した、100%自由でオープンソースのアマチュア無線ログアプリです。ADIFログ管理、QSO署名、LoTWへのアップロードに対応し、Androidのハードウェアセキュリティで鍵を安全に保護します。
     </string>

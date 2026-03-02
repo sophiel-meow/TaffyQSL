@@ -224,7 +224,6 @@
     <string name="licenses_subtitle">第三方库及许可证</string>
 
     <!-- About -->
-    <string name="about_version">版本 2026-SpringBlossom-a</string>
     <string name="about_description">
         一款100%自由开源、注重隐私的业余无线电日志应用。支持 ADIF 日志管理、QSO 签名与 LoTW 上传，并通过 Android 硬件级安全机制保护您的密钥。
     </string>

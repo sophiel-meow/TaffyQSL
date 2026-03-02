@@ -16,8 +16,8 @@ android {
         applicationId = "moe.zzy040330.taffyqsl"
         minSdk = 30
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 20260302
+        versionName = "2026-SpringBlossom-b"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

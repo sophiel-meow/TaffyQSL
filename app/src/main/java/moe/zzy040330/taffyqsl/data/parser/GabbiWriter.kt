@@ -23,7 +23,7 @@ class GabbiWriter {
 
     companion object {
 
-        const val IDENT = "TaffyQSL taffyqsl-1.0"   // TODO: version code
+        const val IDENT = "TaffyQSL taffyqsl"
 
         // hard-code SIGN_LOTW_V2.0
         // from TrustedQSL: src/location.cpp:819-822, concatenated from sigspec

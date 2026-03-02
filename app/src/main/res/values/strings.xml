@@ -230,7 +230,7 @@
 
     <!-- About -->
     <string name="about_app_name" translatable="false">TaffyQSL</string>
-    <string name="about_version">Version 2026-SpringBlossom-a</string>
+    <string name="about_version" translatable="false">Version 2026-SpringBlossom-b</string>
     <string name="about_description">
        A 100% free, libre and privacy-respecting amateur radio logbook. Built for ADIF management, QSO signing, and LoTW integration — with hardware-backed key protection on Android.
     </string>
