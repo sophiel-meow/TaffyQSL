@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">TaffyQSL</string>
+    <string name="app_name" translatable="false">TaffyQSL</string>
 
     <!-- Navigation -->
     <string name="nav_certificates">Certificates</string>
@@ -152,7 +152,7 @@
     <!-- Quick Add -->
     <string name="quick_add">Quick Add</string>
     <string name="quick_add_hint">One entry per line. Callsign, time, and frequency or satellite are required.</string>
-    <string name="quick_add_placeholder">BG4KNN 12:30 14.074 FT8</string>
+    <string name="quick_add_placeholder" translatable="false">BG4KNN 12:30 14.074 FT8</string>
     <string name="quick_add_empty_hint">Start typing above to parse QSOs</string>
     <string name="quick_add_save_valid">Save %1$d valid</string>
     <string name="quick_add_save_all">Save %1$d QSOs</string>
@@ -229,11 +229,15 @@
     <string name="licenses_subtitle">Third-party libraries and licenses</string>
 
     <!-- About -->
-    <string name="about_app_name">TaffyQSL</string>
+    <string name="about_app_name" translatable="false">TaffyQSL</string>
     <string name="about_version">Version 2026-SpringBlossom-a</string>
     <string name="about_description">
-       A free, libre and privacy-respecting amateur radio logbook. Built for ADIF management, QSO signing, and LoTW integration — with hardware-backed key protection on Android.
+       A 100% free, libre and privacy-respecting amateur radio logbook. Built for ADIF management, QSO signing, and LoTW integration — with hardware-backed key protection on Android.
     </string>
+
+    <string name="about_source_code_label">Source Code</string>
+    <string name="about_license_label">License</string>
+    <string name="about_license_name">GNU General Public License v3.0</string>
 
     <!-- Licenses -->
     <string name="licenses_title">Open Source Licenses</string>
@@ -245,7 +249,6 @@
     <string name="debug_mode_desc">Enable developer features for testing</string>
     <string name="dxcc_entity_debug">DXCC Entity (debug override)</string>
     <string name="dxcc_search_hint">Search DXCC…</string>
-    <string name="about_source_code"><![CDATA[Source code & updates: https://github.com/sophiel-meow/TaffyQSL]]></string>
-    <string name="about_designed_by"><![CDATA[Designed by Sophiel & Alice 🌸]]></string>
-    <string name="about_copyleft"><![CDATA[🄯 2026 Sophiel & Alice – Free software – share and enjoy!]]></string>
+    <string name="about_designed_by" translatable="false"><![CDATA[Designed by Sophiel & Alice 🍬]]></string>
+    <string name="about_copyleft" translatable="false"><![CDATA[🄯 2026 Sophiel & Alice – Free software – share and enjoy!]]></string>
 </resources>

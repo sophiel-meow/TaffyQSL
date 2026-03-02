@@ -34,7 +34,6 @@ data class LibraryLicense(
     val url: String
 )
 
-// TODO: add here
 private val libraries = listOf(
     LibraryLicense(
         name = "Kotlin",
@@ -60,6 +59,26 @@ private val libraries = listOf(
         name = "Kotlin Coroutines",
         license = "Apache License 2.0",
         url = "https://kotlinlang.org/docs/coroutines-overview.html"
+    ),
+    LibraryLicense(
+        name = "OkHttp",
+        license = "Apache License 2.0",
+        url = "https://square.github.io/okhttp/"
+    ),
+    LibraryLicense(
+        name = "AndroidX Navigation",
+        license = "Apache License 2.0",
+        url = "https://developer.android.com/guide/navigation"
+    ),
+    LibraryLicense(
+        name = "AndroidX Lifecycle",
+        license = "Apache License 2.0",
+        url = "https://developer.android.com/topic/libraries/architecture/lifecycle"
+    ),
+    LibraryLicense(
+        name = "AndroidX Core KTX",
+        license = "Apache License 2.0",
+        url = "https://developer.android.com/kotlin/ktx"
     ),
     LibraryLicense(
         name = "Catppuccin Color Palette",
