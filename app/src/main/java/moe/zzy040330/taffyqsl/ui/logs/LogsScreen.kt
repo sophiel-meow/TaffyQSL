@@ -54,38 +54,31 @@ fun LogsScreen(
         stringResource(R.string.tab_adif_files)
     )
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.nav_logs)) })
-        },
-        contentWindowInsets = WindowInsets(0.dp)
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            TabRow(selectedTabIndex = selectedTabIndex) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = { Text(title) }
-                    )
-                }
-            }
-            when (selectedTabIndex) {
-                0 -> SignLogTab(
-                    viewModel = viewModel,
-                    contentPadding = contentPadding
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = contentPadding.calculateTopPadding())
+    ) {
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { selectedTabIndex = index },
+                    text = { Text(title) }
                 )
+            }
+        }
+        when (selectedTabIndex) {
+            0 -> SignLogTab(
+                viewModel = viewModel,
+                contentPadding = contentPadding
+            )
 
-                1 -> AdifFilesTab(
-                    viewModel = viewModel,
-                    contentPadding = contentPadding,
-                    navController = navController
-                )
-            }
+            1 -> AdifFilesTab(
+                viewModel = viewModel,
+                contentPadding = contentPadding,
+                navController = navController
+            )
         }
     }
 }

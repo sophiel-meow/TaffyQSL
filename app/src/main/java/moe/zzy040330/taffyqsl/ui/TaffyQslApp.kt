@@ -11,8 +11,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
@@ -51,6 +53,7 @@ private val topLevelRoutes = setOf(
     Screen.Settings.route
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaffyQslApp() {
     val navController = rememberNavController()
@@ -59,6 +62,18 @@ fun TaffyQslApp() {
     val showBottomNav = currentDestination?.route in topLevelRoutes
 
     Scaffold(
+        topBar = {
+            if (showBottomNav) {
+                val screens = listOf(
+                    Screen.Logs, Screen.Stations, Screen.Certificates,
+                    Screen.Lotw, Screen.Settings
+                )
+                val currentScreen = screens.firstOrNull { currentDestination?.route == it.route }
+                if (currentScreen != null) {
+                    TopAppBar(title = { Text(stringResource(currentScreen.titleResId)) })
+                }
+            }
+        },
         bottomBar = {
             if (showBottomNav) {
                 val navItemColors = NavigationBarItemDefaults.colors(

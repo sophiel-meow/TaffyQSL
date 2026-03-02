@@ -47,30 +47,11 @@ fun StationsScreen(
     val debugMode =
         if (BuildConfig.DEBUG) AppPreferences.getInstance(context).isDebugMode else false
 
-    Scaffold(
-        topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.nav_stations)) })
-        },
-        floatingActionButton = {
-            Box(modifier = Modifier.padding(contentPadding)) {
-                FloatingActionButton(onClick = {
-                    viewModel.refreshCerts()
-                    showAddDialog = true
-                }) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_station)
-                    )
-                }
-            }
-        },
-        contentWindowInsets = WindowInsets(0.dp)
-    ) { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         if (stations.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
                     .padding(contentPadding),
                 contentAlignment = Alignment.Center
             ) {
@@ -86,8 +67,8 @@ fun StationsScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp + contentPadding.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
                     end = 16.dp + contentPadding.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
-                    top = 16.dp + padding.calculateTopPadding(),
-                    bottom = 16.dp + padding.calculateBottomPadding() + contentPadding.calculateBottomPadding()
+                    top = 16.dp + contentPadding.calculateTopPadding(),
+                    bottom = 16.dp + contentPadding.calculateBottomPadding() + 80.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -99,6 +80,20 @@ fun StationsScreen(
                     )
                 }
             }
+        }
+        FloatingActionButton(
+            onClick = {
+                viewModel.refreshCerts()
+                showAddDialog = true
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp + contentPadding.calculateBottomPadding())
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = stringResource(R.string.add_station)
+            )
         }
     }
 

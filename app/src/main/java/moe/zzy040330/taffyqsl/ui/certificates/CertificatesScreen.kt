@@ -105,38 +105,11 @@ fun CertificatesScreen(
         }
     }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        topBar = {
-            TopAppBar(title = { Text(stringResource(R.string.nav_certificates)) })
-        },
-        floatingActionButton = {
-            Box(modifier = Modifier.padding(contentPadding)) {
-                FloatingActionButton(
-                    onClick = {
-                        pickP12.launch(
-                            arrayOf(
-                                "application/x-pkcs12",
-                                "application/octet-stream",
-                                "*/*"
-                            )
-                        )
-                    }
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(R.string.cert_import)
-                    )
-                }
-            }
-        },
-        contentWindowInsets = WindowInsets(0.dp)
-    ) { padding ->
+    Box(modifier = Modifier.fillMaxSize()) {
         if (certs.isEmpty()) {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
                     .padding(contentPadding),
                 contentAlignment = Alignment.Center
             ) {
@@ -152,8 +125,8 @@ fun CertificatesScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp + contentPadding.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
                     end = 16.dp + contentPadding.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
-                    top = 16.dp + padding.calculateTopPadding(),
-                    bottom = 16.dp + padding.calculateBottomPadding() + contentPadding.calculateBottomPadding()
+                    top = 16.dp + contentPadding.calculateTopPadding(),
+                    bottom = 16.dp + contentPadding.calculateBottomPadding() + 80.dp
                 ),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -165,6 +138,31 @@ fun CertificatesScreen(
                     )
                 }
             }
+        }
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = contentPadding.calculateBottomPadding())
+        )
+        FloatingActionButton(
+            onClick = {
+                pickP12.launch(
+                    arrayOf(
+                        "application/x-pkcs12",
+                        "application/octet-stream",
+                        "*/*"
+                    )
+                )
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(end = 16.dp, bottom = 16.dp + contentPadding.calculateBottomPadding())
+        ) {
+            Icon(
+                Icons.Default.Add,
+                contentDescription = stringResource(R.string.cert_import)
+            )
         }
     }
 
