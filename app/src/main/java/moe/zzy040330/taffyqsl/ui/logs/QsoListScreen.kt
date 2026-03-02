@@ -4,8 +4,14 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
@@ -57,6 +63,24 @@ fun QsoListScreen(
     var pendingOutputFile by remember { mutableStateOf<File?>(null) }
     var showQuickAdd by remember { mutableStateOf(false) }
     val snackbarHostState = remember { SnackbarHostState() }
+    val listState = rememberLazyListState()
+    var fabVisible by remember { mutableStateOf(true) }
+    LaunchedEffect(listState) {
+        var prevIndex = 0
+        var prevOffset = 0
+        snapshotFlow { listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset }
+            .collect { (index, offset) ->
+                fabVisible = when {
+                    index < prevIndex -> true
+                    index > prevIndex -> false
+                    offset < prevOffset -> true
+                    offset > prevOffset -> false
+                    else -> fabVisible
+                }
+                prevIndex = index
+                prevOffset = offset
+            }
+    }
 
     // ******** Launchers ********
     val saveTq8Launcher = rememberLauncherForActivityResult(
@@ -323,25 +347,31 @@ fun QsoListScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+            AnimatedVisibility(
+                visible = fabVisible || qsos.isEmpty(),
+                enter = fadeIn() + scaleIn(),
+                exit = fadeOut() + scaleOut()
             ) {
-                SmallFloatingActionButton(
-                    onClick = { navController.navigate("qso_edit/${viewModel.fileName}/0") },
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.add_qso_manual)
-                    )
-                }
-                FloatingActionButton(onClick = { showQuickAdd = true }) {
-                    Icon(
-                        Icons.Default.Add,
-                        contentDescription = stringResource(R.string.quick_add)
-                    )
+                    SmallFloatingActionButton(
+                        onClick = { navController.navigate("qso_edit/${viewModel.fileName}/0") },
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    ) {
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.add_qso_manual)
+                        )
+                    }
+                    FloatingActionButton(onClick = { showQuickAdd = true }) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = stringResource(R.string.quick_add)
+                        )
+                    }
                 }
             }
         }
@@ -377,10 +407,11 @@ fun QsoListScreen(
             }
         } else {
             LazyColumn(
+                state = listState,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(
                     top = padding.calculateTopPadding() + 8.dp,
-                    bottom = 88.dp,
+                    bottom = 140.dp,
                     start = 16.dp,
                     end = 16.dp
                 ),
