@@ -35,14 +35,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-//    kotlin {
-//        jvmToolchain(11)
-//    }
     buildFeatures {
         compose = true
         buildConfig = true
     }
     buildToolsVersion = "36.1.0"
+
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+}
+
+kotlin {
+    jvmToolchain(11)
 }
 
 dependencies {

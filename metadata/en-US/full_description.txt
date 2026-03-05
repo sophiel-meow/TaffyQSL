@@ -1,0 +1,16 @@
+TaffyQSL is a free and open-source amateur radio logbook for Android, inspired by TrustedQSL.
+
+It allows radio operators to manage contacts using the ADIF format and sign QSOs in workflows compatible with Logbook of the World (LoTW). Certificates and private keys are stored locally and protected using the Android Keystore, with encrypted backups on the device.
+
+TaffyQSL focuses on local-first operation and privacy. All log data and certificates remain on the user's device. The application contains no telemetry or tracking.
+
+Features:
+
+* Creation, editing, and export of ADIF logbooks
+* QSO signing compatible with LoTW workflows
+* Direct upload to LoTW and query of confirmed QSLs
+* Natural-language QSO parser for faster logging
+* Satellite and DXCC entity support
+* Hardware-backed key protection when supported by the device
+* Customizable date and time display formats
+* Available in English, Chinese (Simplified), and Japanese

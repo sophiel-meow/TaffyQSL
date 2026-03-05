@@ -1,0 +1,1 @@
+Free and open-source amateur radio logbook with ADIF support and QSO signing
