@@ -19,6 +19,7 @@
   [![kotlin](https://img.shields.io/badge/Kotlin-2.3-orange.svg)](https://kotlinlang.org) 
   [![android](https://img.shields.io/badge/Android-16-brightgreen.svg)](https://developer.android.com)
 
+English | [简体中文](README.zh-CN.md) | [日本語](README.ja.md)
 
 </div>
 
@@ -41,11 +42,21 @@ Designed for amateur radio operators who value privacy and security, TaffyQSL ke
 - Satellite and DXCC entity support  
 - Customizable date and time display formats  
 
+## Screenshots
+
+<p align="center">
+  <img src="metadata/en-US/images/phoneScreenshots/1.png" width="220"/>
+  <img src="metadata/en-US/images/phoneScreenshots/2.png" width="220"/>
+  <img src="metadata/en-US/images/phoneScreenshots/3.png" width="220"/>
+  <img src="metadata/en-US/images/phoneScreenshots/4.png" width="220"/>
+</p>
 
 ## Privacy & Security
 
 - **Keys are generated and stored locally** in the Android Keystore  
-- **Private keys never leave your device**  
+- **Private keys are stored locally in the Android Keystore**  
+- **Keys are never transmitted to external servers**  
+- **Optional backups are always user-controlled**
 - **No telemetry or tracking**  
 - **100% free & open-source**  
 - Designed to protect your privacy while interacting with LoTW  
@@ -68,19 +79,11 @@ cd TaffyQSL
 ./gradlew assembleDebug
 ````
 
-**Requirements:**
+**Build Requirements**
 
-* Kotlin
-* Latest Android Studio
-* Minimum SDK 30
-
-
-## License
-
-TaffyQSL is licensed under the **GNU General Public License v3.0**.
-Not affiliated with ARRL or LoTW.
-All trademarks belong to their respective owners.
-
+- JDK 21  
+- Android Studio (latest stable version)  
+- Android SDK with API version 36 or higher
 
 ## Disclaimer
 
@@ -108,3 +111,26 @@ Contributions are welcome!
 * [ ] Backup support
 * [ ] Online query / sync for QRZ.com
 * [ ] Statistics functions
+
+## License
+
+Copyright (C) 2026 Sophiel (BG4KNN)
+
+TaffyQSL is free software released under the **GNU General Public License v3.0**.
+
+You are free to use, study, modify, and redistribute this software
+under the terms of the GPL.
+
+🄯 Copyleft 2026 Sophiel (BG4KNN)
+
+This project is independent and not affiliated with or endorsed by ARRL or Logbook of the World.  
+All trademarks belong to their respective owners.
+
+## Credits
+
+Designed by Sophiel & Alice
+
+Inspiration: 
+- [TrustedQSL](https://sourceforge.net/projects/trustedqsl/)
+- [X-QSL](https://gitee.com/yuzhenwu/x-qsl-amateur-radio-adif-tool)
+
