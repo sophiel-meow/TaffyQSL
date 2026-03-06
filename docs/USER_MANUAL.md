@@ -24,7 +24,11 @@ TaffyQSL is available through the following channels:
 1. Download the APK file to your Android device
 2. Enable "Install from Unknown Sources" in your device settings if prompted
 3. Open the APK file and follow the installation prompts
-4. Grant necessary permissions when requested
+4. Grant necessary permissions when requested (spoiler: only INTERNET is used (⁄ ⁄•⁄ω⁄•⁄ ⁄))
+
+   - No creepy trackers, no location, nothing else.
+   - Most Android devices don’t even let you deny INTERNET—try if you want, but then networking features won’t work.
+   - GrapheneOS users: there’s a Sensors permission (accelerometer etc.), you can just say "no"—the app will never watch you via sensors, lol.
 
 ---
 
