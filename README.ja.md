@@ -38,10 +38,10 @@ ADIF ファイル管理、QSO 署名、LoTW 連携をサポートし、Android K
 ## スクリーンショット
 
 <p align="center">
-  <img src="metadata/en-US/images/phoneScreenshots/1.png" width="220"/>
-  <img src="metadata/en-US/images/phoneScreenshots/2.png" width="220"/>
-  <img src="metadata/en-US/images/phoneScreenshots/3.png" width="220"/>
-  <img src="metadata/en-US/images/phoneScreenshots/4.png" width="220"/>
+  <img src="metadata/en-US/images/phoneScreenshots/1.png" width="200"/>
+  <img src="metadata/en-US/images/phoneScreenshots/2.png" width="200"/>
+  <img src="metadata/en-US/images/phoneScreenshots/3.png" width="200"/>
+  <img src="metadata/en-US/images/phoneScreenshots/4.png" width="200"/>
 </p>
 
 ## プライバシーとセキュリティ
