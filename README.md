@@ -3,7 +3,7 @@
 # TaffyQSL
 
 <p align="center">
-  <img src="taffyQSL_noblack.svg" alt="Taffy QSL icon" style="width: 192px" />
+  <img src="icons/TaffyQSL_nosafezone.svg" alt="Taffy QSL icon" style="width: 192px" />
 </p>
 
 <p><br/></p>
