@@ -16,7 +16,9 @@
 [![kotlin](https://img.shields.io/badge/Kotlin-2.3-orange.svg)](https://kotlinlang.org)
 [![android](https://img.shields.io/badge/Android-16-brightgreen.svg)](https://developer.android.com)
 
-[English](README.md) | 简体中文 | [日本語](README.ja.md)
+[English](README.md) | 简体中文 | [日本語](README.ja.md) 
+
+[使用说明](docs/USER_MANUAL.zh-CN.md)
 
 </div>
 
