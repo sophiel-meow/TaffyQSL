@@ -14,6 +14,10 @@
 
 -keep class moe.zzy040330.taffyqsl.data.db.** { *; }
 
+# BouncyCastle
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

@@ -78,6 +78,7 @@ dependencies {
     implementation(libs.lifecycle.livedata.ktx)
     implementation(libs.okhttp)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.bouncycastle.bcprov)
 
     // Test
     testImplementation(libs.junit)

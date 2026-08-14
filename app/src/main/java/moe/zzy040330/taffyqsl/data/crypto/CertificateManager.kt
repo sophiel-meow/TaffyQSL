@@ -28,6 +28,7 @@ import java.time.ZoneOffset
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 
 class P12ImportPasswordException(message: String, cause: Throwable) : Exception(message, cause)
 
@@ -40,6 +41,8 @@ class CertificateManager(private val context: Context) {
         // Password used for the temporary in-memory PKCS#12 used to re-import
         // certificate + key pairs restored from a .tbk backup.
         private val INTERNAL_P12_PASSWORD: CharArray = "taffyqsl-backup".toCharArray()
+
+        private val BC_PROVIDER: BouncyCastleProvider by lazy { BouncyCastleProvider() }
 
         // Custom OIDs in ARRL certificates
         const val OID_CALLSIGN = "1.3.6.1.4.1.12348.1.1"
@@ -243,8 +246,16 @@ class CertificateManager(private val context: Context) {
         throw Exception("Invalid PKCS12 file", cause)
     }
 
+    private fun p12KeyStore(): KeyStore =
+        runCatching {
+            KeyStore.getInstance("PKCS12", BC_PROVIDER)
+        }.getOrElse {
+            // Fall back to the platform provider if bcprov is unavailable.
+            KeyStore.getInstance("PKCS12")
+        }
+
     private fun parseP12(stream: InputStream, passwordChars: CharArray?): CertInfo {
-        val p12Store = KeyStore.getInstance("PKCS12")
+        val p12Store = p12KeyStore()
         p12Store.load(stream, passwordChars)
 
         // Find the alias that has a private key, which is the user's end-entity certificate.
@@ -294,7 +305,7 @@ class CertificateManager(private val context: Context) {
                 val privateKey = parsePrivateKeyPem(privateKeyPem)
                     ?: throw Exception("Private key missing or unsupported in backup; re-import via .p12")
 
-                val p12Store = KeyStore.getInstance("PKCS12")
+                val p12Store = p12KeyStore()
                 p12Store.load(null, null)
                 p12Store.setKeyEntry("certificate", privateKey, INTERNAL_P12_PASSWORD, arrayOf(cert))
                 val p12Bytes = ByteArrayOutputStream().also {
@@ -597,7 +608,7 @@ class CertificateManager(private val context: Context) {
             val certChain = loadCertChain(alias) ?: arrayOf(cert)
 
             val exportPassword = if (password.isEmpty()) charArrayOf() else password.toCharArray()
-            val p12Store = KeyStore.getInstance("PKCS12")
+            val p12Store = p12KeyStore()
             p12Store.load(null, exportPassword)
 
             // Store the private key with the full cert chain
