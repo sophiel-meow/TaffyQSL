@@ -8,27 +8,41 @@ import android.security.keystore.KeyProtection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import moe.zzy040330.taffyqsl.domain.model.CertInfo
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.InputStream
+import java.math.BigInteger
 import java.security.KeyFactory
 import java.security.KeyStore
 import java.security.MessageDigest
 import java.security.PrivateKey
+import java.security.UnrecoverableKeyException
 import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
 import java.security.spec.PKCS8EncodedKeySpec
+import java.security.spec.RSAPrivateCrtKeySpec
 import java.time.LocalDate
 import java.time.ZoneOffset
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
+import org.bouncycastle.jce.provider.BouncyCastleProvider
+
+class P12ImportPasswordException(message: String, cause: Throwable) : Exception(message, cause)
 
 class CertificateManager(private val context: Context) {
 
     companion object {
         const val CERTS_DIR = "certs"
         const val ANDROID_KEYSTORE = "AndroidKeyStore"
+
+        // Password used for the temporary in-memory PKCS#12 used to re-import
+        // certificate + key pairs restored from a .tbk backup.
+        private val INTERNAL_P12_PASSWORD: CharArray = "taffyqsl-backup".toCharArray()
+
+        private val BC_PROVIDER: BouncyCastleProvider by lazy { BouncyCastleProvider() }
 
         // Custom OIDs in ARRL certificates
         const val OID_CALLSIGN = "1.3.6.1.4.1.12348.1.1"
@@ -207,49 +221,254 @@ class CertificateManager(private val context: Context) {
     suspend fun importP12(uri: Uri, password: String): Result<CertInfo> =
         withContext(Dispatchers.IO) {
             runCatching {
-                val p12Store = KeyStore.getInstance("PKCS12")
-                val passwordChars: CharArray? =
-                    if (password.isEmpty()) charArrayOf() else password.toCharArray()
-
-                context.contentResolver.openInputStream(uri)?.use { stream ->
-                    p12Store.load(stream, passwordChars)
-                } ?: throw Exception("Cannot open file")
-
-                // Find the alias that has a private key which 's the user's end-entity certificate.
-                // A PKCS12 from LoTW contains three certs (user + intermediate CA + root CA);
-                // only the user cert has a corresponding private key entry (isKeyEntry == true).
-                val alias = p12Store.aliases().toList().firstOrNull { p12Store.isKeyEntry(it) }
-                    ?: throw Exception("No certificate with private key found in p12 file")
-                val cert = p12Store.getCertificate(alias) as? X509Certificate
-                    ?: throw Exception("Invalid certificate in p12 file")
-                val privateKey = p12Store.getKey(alias, passwordChars) as? PrivateKey
-                    ?: throw Exception("No private key found in p12 file")
-
-                // Get the full certificate chain (user cert + intermediate CA + root CA)
-                val certChain: Array<Certificate> =
-                    p12Store.getCertificateChain(alias)?.map { it as Certificate }?.toTypedArray()
-                        ?: arrayOf(cert)
-
-                val certInfo = parseCertInfo(cert)
-
-                // Store cert PEM
-                saveCertPem(certInfo.alias, cert)
-
-                // Store the full certificate chain for export
-                saveCertChain(certInfo.alias, certChain)
-
-                // Store private key in Android Keystore (for signing)
-                importPrivateKeyToKeystore(certInfo.alias, privateKey, cert)
-
-                // Store an encrypted copy of the raw private key bytes for later export.
-                // Android Keystore keys are non-extractable (getEncoded() == null), so we can't
-                // reconstruct a PKCS12 from them directly. We encrypt the PKCS8 bytes with a
-                // per-cert AES-GCM key that itself lives in Android Keystore.
-                saveEncryptedPrivateKey(certInfo.alias, privateKey)
-
-                certInfo
+                val data = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                    ?: throw Exception("Cannot open file")
+                importP12FromBytes(data, password)
             }
         }
+
+    private fun importP12FromBytes(data: ByteArray, password: String): CertInfo {
+        // Password-less containers: try an empty password first, then a null one.
+        val candidates: List<CharArray?> =
+            if (password.isEmpty()) listOf(charArrayOf(), null) else listOf(password.toCharArray())
+
+        var lastError: Throwable? = null
+        for (candidate in candidates) {
+            try {
+                return parseP12(ByteArrayInputStream(data), candidate)
+            } catch (e: Throwable) {
+                lastError = e
+            }
+        }
+
+        // BC's KeyStore SPI cannot decrypt some containers (notably password-less
+        // PKCS#12 from modern OpenSSL: PBES2 + empty password, where its PBKDF2
+        // provider rejects an empty password). Fall back to a manual parser.
+        runCatching { Pkcs12Parser.parse(data, password) }.getOrNull()?.let { content ->
+            return importPkcs12Content(content)
+        }
+
+        val cause = lastError ?: Exception("Cannot parse PKCS12 data")
+        if (isPasswordError(cause)) {
+            throw P12ImportPasswordException("Wrong or missing PKCS12 password", cause)
+        }
+        throw Exception("Invalid PKCS12 file", cause)
+    }
+
+    /**
+     * Import a [Pkcs12Parser.Pkcs12Content] extracted manually from a password-less
+     * PKCS#12 by re-wrapping it into an in-memory container that the normal import
+     * path (Android Keystore + encrypted key backup) can consume.
+     */
+    private fun importPkcs12Content(content: Pkcs12Parser.Pkcs12Content): CertInfo {
+        if (content.chain.isEmpty()) throw Exception("No certificate found in PKCS12 file")
+        val p12Store = p12KeyStore()
+        p12Store.load(null, null)
+        p12Store.setKeyEntry("certificate", content.privateKey, INTERNAL_P12_PASSWORD, content.chain)
+        val p12Bytes = ByteArrayOutputStream().also {
+            p12Store.store(it, INTERNAL_P12_PASSWORD)
+        }.toByteArray()
+        return parseP12(ByteArrayInputStream(p12Bytes), INTERNAL_P12_PASSWORD)
+    }
+
+    private fun p12KeyStore(): KeyStore =
+        runCatching {
+            KeyStore.getInstance("PKCS12", BC_PROVIDER)
+        }.getOrElse {
+            // Fall back to the platform provider if bcprov is unavailable.
+            KeyStore.getInstance("PKCS12")
+        }
+
+    private fun parseP12(stream: InputStream, passwordChars: CharArray?): CertInfo {
+        val p12Store = p12KeyStore()
+        p12Store.load(stream, passwordChars)
+
+        // Find the alias that has a private key, which is the user's end-entity certificate.
+        // A PKCS12 from LoTW contains three certs (user + intermediate CA + root CA);
+        // only the user cert has a corresponding private key entry (isKeyEntry == true).
+        val alias = p12Store.aliases().toList().firstOrNull { p12Store.isKeyEntry(it) }
+            ?: throw Exception("No certificate with private key found in p12 file")
+        val cert = p12Store.getCertificate(alias) as? X509Certificate
+            ?: throw Exception("Invalid certificate in p12 file")
+        val privateKey = p12Store.getKey(alias, passwordChars) as? PrivateKey
+            ?: throw Exception("No private key found in p12 file")
+
+        // Get the full certificate chain (user cert + intermediate CA + root CA)
+        val certChain: Array<Certificate> =
+            p12Store.getCertificateChain(alias)?.map { it as Certificate }?.toTypedArray()
+                ?: arrayOf(cert)
+
+        val certInfo = parseCertInfo(cert)
+
+        // Store cert PEM
+        saveCertPem(certInfo.alias, cert)
+
+        // Store the full certificate chain for export
+        saveCertChain(certInfo.alias, certChain)
+
+        // Store private key in Android Keystore (for signing)
+        importPrivateKeyToKeystore(certInfo.alias, privateKey, cert)
+
+        // Store an encrypted copy of the raw private key bytes for later export.
+        // Android Keystore keys are non-extractable (getEncoded() == null), so we can't
+        // reconstruct a PKCS12 from them directly. We encrypt the PKCS8 bytes with a
+        // per-cert AES-GCM key that itself lives in Android Keystore.
+        saveEncryptedPrivateKey(certInfo.alias, privateKey)
+
+        return certInfo
+    }
+
+    suspend fun importCertKeyPair(certPem: String, privateKeyPem: String): Result<CertInfo> =
+        withContext(Dispatchers.IO) {
+            runCatching {
+                val cert = runCatching {
+                    CertificateFactory.getInstance("X.509")
+                        .generateCertificate(ByteArrayInputStream(certPem.toByteArray(Charsets.UTF_8)))
+                            as X509Certificate
+                }.getOrElse { throw Exception("Invalid certificate in backup") }
+
+                val privateKey = parsePrivateKeyPem(privateKeyPem)
+                    ?: throw Exception("Private key missing or unsupported in backup; re-import via .p12")
+
+                val p12Store = p12KeyStore()
+                p12Store.load(null, null)
+                p12Store.setKeyEntry("certificate", privateKey, INTERNAL_P12_PASSWORD, arrayOf(cert))
+                val p12Bytes = ByteArrayOutputStream().also {
+                    p12Store.store(it, INTERNAL_P12_PASSWORD)
+                }.toByteArray()
+
+                parseP12(ByteArrayInputStream(p12Bytes), INTERNAL_P12_PASSWORD)
+            }
+        }
+
+    /** The private key (PKCS#8 PEM) for a certificate, used when writing .tbk backups. */
+    fun getPrivateKeyPem(alias: String): String? {
+        val cert = getCertificate(alias) ?: return null
+        val key = loadDecryptedPrivateKey(alias, cert.publicKey.algorithm) ?: return null
+        return pemWrap("PRIVATE KEY", key.encoded)
+    }
+
+    /** The public key (SPKI PEM) for a certificate, used when writing .tbk backups. */
+    fun getPublicKeyPem(alias: String): String? {
+        val cert = getCertificate(alias) ?: return null
+        return pemWrap("PUBLIC KEY", cert.publicKey.encoded)
+    }
+
+    /** The certificate (X.509 PEM) for a certificate, used when writing .tbk backups. */
+    fun getCertPem(alias: String): String? {
+        val cert = getCertificate(alias) ?: return null
+        return pemWrap("CERTIFICATE", cert.encoded)
+    }
+
+    private fun pemWrap(header: String, der: ByteArray): String {
+        val b64 = android.util.Base64.encodeToString(der, android.util.Base64.DEFAULT)
+        return "-----BEGIN $header-----\n$b64-----END $header-----\n"
+    }
+
+    private fun isPasswordError(e: Throwable): Boolean {
+        var t: Throwable? = e
+        var depth = 0
+        while (t != null && depth < 8) {
+            if (t is UnrecoverableKeyException) return true
+            val msg = t.message?.lowercase() ?: ""
+            if (msg.contains("password") || msg.contains("mac invalid") ||
+                msg.contains("integrity check") || msg.contains("cannot recover key")
+            ) {
+                return true
+            }
+            t = t.cause
+            depth++
+        }
+        return false
+    }
+
+    private fun parsePrivateKeyPem(pem: String): PrivateKey? {
+        for ((header, body) in parsePemBlocks(pem)) {
+            when (header) {
+                "PRIVATE KEY" -> {
+                    val der = android.util.Base64.decode(body, android.util.Base64.DEFAULT)
+                    return runCatching {
+                        KeyFactory.getInstance("RSA").generatePrivate(PKCS8EncodedKeySpec(der))
+                    }.recoverCatching {
+                        KeyFactory.getInstance("EC").generatePrivate(PKCS8EncodedKeySpec(der))
+                    }.getOrNull()
+                }
+                "RSA PRIVATE KEY" -> {
+                    val der = android.util.Base64.decode(body, android.util.Base64.DEFAULT)
+                    val spec = parseRsaPkcs1(der) ?: return null
+                    return runCatching {
+                        KeyFactory.getInstance("RSA").generatePrivate(spec)
+                    }.getOrNull()
+                }
+                "ENCRYPTED PRIVATE KEY" ->
+                    throw Exception("Encrypted private key in backup; re-import via .p12")
+                else -> Unit
+            }
+        }
+        return null
+    }
+
+    private fun parsePemBlocks(pem: String): List<Pair<String, String>> {
+        val blocks = mutableListOf<Pair<String, String>>()
+        val pattern = Regex(
+            "-----BEGIN ([A-Z0-9 ]+)-----\\s*([A-Za-z0-9+/=\\s]+?)\\s*-----END \\1-----"
+        )
+        for (match in pattern.findAll(pem)) {
+            val header = match.groupValues[1]
+            val body = match.groupValues[2].filter { !it.isWhitespace() }
+            blocks.add(header to body)
+        }
+        return blocks
+    }
+
+    /** Parse a PKCS#1 RSA private key (used by some tools instead of PKCS#8). */
+    private fun parseRsaPkcs1(der: ByteArray): RSAPrivateCrtKeySpec? {
+        return try {
+            val reader = DerReader(der)
+            reader.readTag(0x30) // SEQUENCE
+            val ints = (0 until 9).map { reader.readInteger() }
+            RSAPrivateCrtKeySpec(
+                ints[1], ints[2], ints[3],
+                ints[4], ints[5], ints[6], ints[7], ints[8]
+            )
+        } catch (_: Exception) {
+            null
+        }
+    }
+
+    private class DerReader(private val data: ByteArray) {
+        private var pos = 0
+
+        fun readTag(tag: Int) {
+            if (data[pos].toInt() and 0xFF != tag) throw IllegalArgumentException("Bad DER tag")
+            pos++
+            readLength()
+        }
+
+        fun readInteger(): BigInteger {
+            if (data[pos].toInt() and 0xFF != 0x02) throw IllegalArgumentException("Bad DER integer")
+            pos++
+            val len = readLength()
+            val value = data.copyOfRange(pos, pos + len)
+            pos += len
+            return BigInteger(1, value)
+        }
+
+        private fun readLength(): Int {
+            val first = data[pos].toInt() and 0xFF
+            if (first < 0x80) {
+                pos++
+                return first
+            }
+            val numBytes = first and 0x7F
+            var len = 0
+            for (i in 1..numBytes) {
+                len = (len shl 8) or (data[pos + i].toInt() and 0xFF)
+            }
+            pos += 1 + numBytes
+            return len
+        }
+    }
 
     private fun saveCertPem(alias: String, cert: X509Certificate) {
         val b64 = android.util.Base64.encodeToString(cert.encoded, android.util.Base64.DEFAULT)
@@ -414,7 +633,7 @@ class CertificateManager(private val context: Context) {
             val certChain = loadCertChain(alias) ?: arrayOf(cert)
 
             val exportPassword = if (password.isEmpty()) charArrayOf() else password.toCharArray()
-            val p12Store = KeyStore.getInstance("PKCS12")
+            val p12Store = p12KeyStore()
             p12Store.load(null, exportPassword)
 
             // Store the private key with the full cert chain

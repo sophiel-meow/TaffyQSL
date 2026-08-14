@@ -28,6 +28,7 @@
     <string name="cert_delete_message">删除 %1$s 的证书？此操作不可撤销，且将移除私钥。</string>
     <string name="cert_import_success">%1$s 的证书已成功导入。</string>
     <string name="cert_import_failed">导入失败：%1$s</string>
+    <string name="cert_import_wrong_password">密码错误，请检查 .p12 证书文件的密码。</string>
     <string name="fingerprint">SHA-256 指纹</string>
     <string name="email">邮箱</string>
     <string name="cert_properties">证书属性</string>
@@ -218,6 +219,14 @@
     <string name="lotw_credentials_desc">配置 LoTW 用户名和密码</string>
     <string name="clear_cache">清除缓存</string>
     <string name="clear_cache_desc">删除临时文件和缓存数据</string>
+    <string name="backup_export">导出备份 (.tbk)</string>
+    <string name="backup_export_desc">将证书、电台位置和已签名 QSO 去重记录保存为 TrustedQSL 兼容的 .tbk 文件</string>
+    <string name="backup_import">导入备份 (.tbk)</string>
+    <string name="backup_import_desc">从 .tbk 文件恢复证书、电台位置和已签名 QSO 去重记录</string>
+    <string name="backup_export_success">备份已导出（%1$d 项）。</string>
+    <string name="backup_export_failed">备份导出失败：%1$s</string>
+    <string name="backup_import_success">已恢复 %1$d 个证书、%2$d 个电台位置和 %3$d 条 QSO 去重记录（跳过 %4$d 个证书）。</string>
+    <string name="backup_import_failed">备份导入失败：%1$s</string>
     <string name="about">关于</string>
     <string name="about_subtitle">关于此应用</string>
     <string name="open_source_licenses">开源许可证</string>

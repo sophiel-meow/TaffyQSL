@@ -30,6 +30,7 @@
     <string name="cert_delete_message">Delete certificate for %1$s? This cannot be undone and will remove the private key.</string>
     <string name="cert_import_success">Certificate for %1$s imported successfully.</string>
     <string name="cert_import_failed">Import failed: %1$s</string>
+    <string name="cert_import_wrong_password">Incorrect password. Please check the password for the .p12 certificate file.</string>
     <string name="fingerprint">SHA-256 Fingerprint</string>
     <string name="email">Email</string>
     <string name="cert_properties">Certificate Properties</string>
@@ -223,6 +224,14 @@
     <string name="lotw_credentials_desc">Configure LoTW username and password</string>
     <string name="clear_cache">Clear Cache</string>
     <string name="clear_cache_desc">Remove temporary files and cached data</string>
+    <string name="backup_export">Export Backup (.tbk)</string>
+    <string name="backup_export_desc">Save certificates, station locations, and signed-QSO tracking to a TrustedQSL-compatible .tbk file</string>
+    <string name="backup_import">Import Backup (.tbk)</string>
+    <string name="backup_import_desc">Restore certificates, station locations, and signed-QSO tracking from a .tbk file</string>
+    <string name="backup_export_success">Backup exported (%1$d items).</string>
+    <string name="backup_export_failed">Backup export failed: %1$s</string>
+    <string name="backup_import_success">Restored %1$d certificates, %2$d stations, and %3$d QSO duplicate records (%4$d certificates skipped).</string>
+    <string name="backup_import_failed">Backup import failed: %1$s</string>
     <string name="about">About</string>
     <string name="about_subtitle">About this app</string>
     <string name="open_source_licenses">Open Source Licenses</string>

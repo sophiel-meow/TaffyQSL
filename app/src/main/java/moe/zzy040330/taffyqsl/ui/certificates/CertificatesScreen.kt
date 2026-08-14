@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.AppPreferences
+import moe.zzy040330.taffyqsl.data.crypto.P12ImportPasswordException
 import moe.zzy040330.taffyqsl.domain.model.CertInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,6 +39,7 @@ fun CertificatesScreen(
 
     var showPasswordDialog by remember { mutableStateOf(false) }
     var pendingUri by remember { mutableStateOf<android.net.Uri?>(null) }
+    var passwordAttempted by remember { mutableStateOf(false) }
     var showDeleteDialog by remember { mutableStateOf<CertInfo?>(null) }
     var showDetailSheet by remember { mutableStateOf<CertInfo?>(null) }
     var showExportDialog by remember { mutableStateOf<CertInfo?>(null) }
@@ -49,13 +51,17 @@ fun CertificatesScreen(
     val certExportSuccessMsg = stringResource(R.string.cert_export_success)
     val certImportSuccessTemplate = stringResource(R.string.cert_import_success)
     val certImportFailedTemplate = stringResource(R.string.cert_import_failed)
+    val certWrongPasswordMsg = stringResource(R.string.cert_import_wrong_password)
 
     val pickP12 = rememberLauncherForActivityResult(
         ActivityResultContracts.OpenDocument()
     ) { uri ->
         uri?.let {
             pendingUri = it
-            showPasswordDialog = true
+            passwordAttempted = false
+            // Mirror TrustedQSL: try a password-less import first, and only prompt
+            // for a password if the container requires one.
+            viewModel.importP12(it, "")
         }
     }
 
@@ -75,16 +81,41 @@ fun CertificatesScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        // Refresh when returning to this tab (e.g. after a .tbk restore from Settings).
+        viewModel.loadCerts()
+    }
+
     LaunchedEffect(importResult) {
         importResult?.let { result ->
-            val msg = if (result.isSuccess) {
-                certImportSuccessTemplate.format(result.getOrNull()?.callSign ?: "")
+            if (result.isSuccess) {
+                val msg = certImportSuccessTemplate.format(result.getOrNull()?.callSign ?: "")
+                scope.launch { snackbarHostState.showSnackbar(msg) }
+                pendingUri = null
             } else {
-                certImportFailedTemplate.format(
-                    result.exceptionOrNull()?.message ?: "Unknown error"
-                )
+                val error = result.exceptionOrNull()
+                when {
+                    // First attempt (auto empty password) failed because the container
+                    // requires a password: prompt for it.
+                    error is P12ImportPasswordException && pendingUri != null && !passwordAttempted ->
+                        showPasswordDialog = true
+
+                    // A password was already entered but rejected: report it instead of
+                    // looping the dialog forever.
+                    error is P12ImportPasswordException ->
+                        scope.launch { snackbarHostState.showSnackbar(certWrongPasswordMsg) }
+
+                    else -> {
+                        val msg = certImportFailedTemplate.format(
+                            error?.message ?: "Unknown error"
+                        )
+                        scope.launch { snackbarHostState.showSnackbar(msg) }
+                    }
+                }
+                if (!(error is P12ImportPasswordException && !passwordAttempted)) {
+                    pendingUri = null
+                }
             }
-            scope.launch { snackbarHostState.showSnackbar(msg) }
             viewModel.clearImportResult()
         }
     }
@@ -171,13 +202,14 @@ fun CertificatesScreen(
             onDismiss = {
                 showPasswordDialog = false
                 pendingUri = null
+                passwordAttempted = false
             },
             onConfirm = { password ->
+                passwordAttempted = true
                 pendingUri?.let { uri ->
                     viewModel.importP12(uri, password)
                 }
                 showPasswordDialog = false
-                pendingUri = null
             }
         )
     }

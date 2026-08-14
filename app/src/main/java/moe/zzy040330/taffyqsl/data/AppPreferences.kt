@@ -19,7 +19,7 @@ enum class DateFormatOption(
 
     fun formatDate(date: LocalDate): String = date.format(longFormatter)
 
-    fun preview(): String = formatDate(LocalDate.of(2026, 12, 30))
+    fun preview(): String = formatDate(LocalDate.now())
 }
 
 enum class AppLanguage(val tag: String) {

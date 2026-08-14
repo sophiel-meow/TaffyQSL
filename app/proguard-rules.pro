@@ -5,6 +5,19 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
+-keep class * extends androidx.lifecycle.ViewModel {
+    <init>();
+}
+-keep class * extends androidx.lifecycle.AndroidViewModel {
+    <init>(android.app.Application);
+}
+
+-keep class moe.zzy040330.taffyqsl.data.db.** { *; }
+
+# BouncyCastle
+-keep class org.bouncycastle.** { *; }
+-dontwarn org.bouncycastle.**
+
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:

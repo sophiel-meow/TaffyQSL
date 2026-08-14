@@ -18,4 +18,7 @@ interface DuplicateQsoDao {
 
     @Query("SELECT COUNT(*) FROM duplicate_qsos")
     suspend fun count(): Int
+
+    @Query("SELECT * FROM duplicate_qsos")
+    suspend fun getAll(): List<DuplicateQsoEntity>
 }
