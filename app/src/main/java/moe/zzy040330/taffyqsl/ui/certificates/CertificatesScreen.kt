@@ -23,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.AppPreferences
+import moe.zzy040330.taffyqsl.data.crypto.P12ImportPasswordException
 import moe.zzy040330.taffyqsl.domain.model.CertInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +56,9 @@ fun CertificatesScreen(
     ) { uri ->
         uri?.let {
             pendingUri = it
-            showPasswordDialog = true
+            // Mirror TrustedQSL: try a password-less import first, and only prompt
+            // for a password if the container requires one.
+            viewModel.importP12(it, "")
         }
     }
 
@@ -75,16 +78,29 @@ fun CertificatesScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        // Refresh when returning to this tab (e.g. after a .tbk restore from Settings).
+        viewModel.loadCerts()
+    }
+
     LaunchedEffect(importResult) {
         importResult?.let { result ->
-            val msg = if (result.isSuccess) {
-                certImportSuccessTemplate.format(result.getOrNull()?.callSign ?: "")
+            if (result.isSuccess) {
+                val msg = certImportSuccessTemplate.format(result.getOrNull()?.callSign ?: "")
+                scope.launch { snackbarHostState.showSnackbar(msg) }
+                pendingUri = null
             } else {
-                certImportFailedTemplate.format(
-                    result.exceptionOrNull()?.message ?: "Unknown error"
-                )
+                val error = result.exceptionOrNull()
+                if (error is P12ImportPasswordException && pendingUri != null) {
+                    showPasswordDialog = true
+                } else {
+                    val msg = certImportFailedTemplate.format(
+                        error?.message ?: "Unknown error"
+                    )
+                    scope.launch { snackbarHostState.showSnackbar(msg) }
+                    pendingUri = null
+                }
             }
-            scope.launch { snackbarHostState.showSnackbar(msg) }
             viewModel.clearImportResult()
         }
     }
@@ -177,7 +193,6 @@ fun CertificatesScreen(
                     viewModel.importP12(uri, password)
                 }
                 showPasswordDialog = false
-                pendingUri = null
             }
         )
     }

@@ -5,6 +5,8 @@ import android.app.LocaleManager
 import android.content.Context
 import android.os.Build
 import android.os.LocaleList
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,6 +24,8 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Restore
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -35,14 +39,20 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -51,7 +61,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import kotlinx.coroutines.launch
 import moe.zzy040330.taffyqsl.BuildConfig
 import moe.zzy040330.taffyqsl.R
 import moe.zzy040330.taffyqsl.data.AppLanguage
@@ -64,6 +76,55 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
     val context = LocalContext.current
     val prefs = remember { AppPreferences.getInstance(context) }
     val credentialManager = remember { LotwCredentialManager(context) }
+    val backupViewModel: BackupViewModel = viewModel()
+
+    val backupExportResult by backupViewModel.exportResult.collectAsState()
+    val backupImportResult by backupViewModel.importResult.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+
+    val backupExportSuccessTemplate = stringResource(R.string.backup_export_success)
+    val backupExportFailedTemplate = stringResource(R.string.backup_export_failed)
+    val backupImportSuccessTemplate = stringResource(R.string.backup_import_success)
+    val backupImportFailedTemplate = stringResource(R.string.backup_import_failed)
+
+    val importTbkLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.OpenDocument()
+    ) { uri ->
+        uri?.let { backupViewModel.importTbk(it) }
+    }
+
+    val exportTbkLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.CreateDocument("application/gzip")
+    ) { uri ->
+        uri?.let { backupViewModel.exportTbk(it) }
+    }
+
+    LaunchedEffect(backupExportResult) {
+        backupExportResult?.let { result ->
+            val msg = result.fold(
+                onSuccess = { n -> backupExportSuccessTemplate.format(n) },
+                onFailure = { e -> backupExportFailedTemplate.format(e.message ?: "Unknown error") }
+            )
+            scope.launch { snackbarHostState.showSnackbar(msg) }
+            backupViewModel.clearExportResult()
+        }
+    }
+
+    LaunchedEffect(backupImportResult) {
+        backupImportResult?.let { result ->
+            val msg = result.fold(
+                onSuccess = { s ->
+                    backupImportSuccessTemplate.format(
+                        s.certsImported, s.stationsImported, s.dupesImported, s.certsSkipped
+                    )
+                },
+                onFailure = { e -> backupImportFailedTemplate.format(e.message ?: "Unknown error") }
+            )
+            scope.launch { snackbarHostState.showSnackbar(msg) }
+            backupViewModel.clearImportResult()
+        }
+    }
 
     var debugMode by remember {
         mutableStateOf(if (BuildConfig.DEBUG) prefs.isDebugMode else false)
@@ -79,12 +140,13 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
     }
     var showLotwDialog by remember { mutableStateOf(false) }
 
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
-        contentPadding = PaddingValues(vertical = 8.dp)
-    ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+            contentPadding = PaddingValues(vertical = 8.dp)
+        ) {
         item {
             SettingsSectionHeader(stringResource(R.string.settings_section_general))
         }
@@ -193,8 +255,39 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
         }
 
+        item {
+            SettingsSectionHeader(stringResource(R.string.settings_section_storage))
+        }
+        item {
+            SettingsItem(
+                icon = Icons.Default.Save,
+                title = stringResource(R.string.backup_export),
+                subtitle = stringResource(R.string.backup_export_desc),
+                onClick = { exportTbkLauncher.launch("tqslconfig.tbk") }
+            )
+        }
+        item {
+            SettingsItem(
+                icon = Icons.Default.Restore,
+                title = stringResource(R.string.backup_import),
+                subtitle = stringResource(R.string.backup_import_desc),
+                onClick = {
+                    importTbkLauncher.launch(
+                        arrayOf(
+                            "application/gzip",
+                            "application/octet-stream",
+                            "application/x-tbk",
+                            "*/*"
+                        )
+                    )
+                }
+            )
+        }
 
-        // TODO: backup & restore
+        item {
+            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        }
+
         // TODO: pin & biometric
 
 
@@ -241,6 +334,14 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
                 )
             }
         }
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(innerPadding)
+        )
     }
 
     if (showLotwDialog) {
