@@ -28,6 +28,7 @@
     <string name="cert_delete_message">%1$s の証明書を削除しますか？この操作は取り消せず、秘密鍵も削除されます。</string>
     <string name="cert_import_success">%1$s の証明書をインポートしました。</string>
     <string name="cert_import_failed">インポート失敗：%1$s</string>
+    <string name="cert_import_wrong_password">パスワードが正しくありません。.p12 証明書ファイルのパスワードを確認してください。</string>
     <string name="fingerprint">SHA-256 フィンガープリント</string>
     <string name="email">メールアドレス</string>
     <string name="cert_properties">証明書の詳細</string>

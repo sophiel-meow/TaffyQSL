@@ -28,6 +28,7 @@
     <string name="cert_delete_message">删除 %1$s 的证书？此操作不可撤销，且将移除私钥。</string>
     <string name="cert_import_success">%1$s 的证书已成功导入。</string>
     <string name="cert_import_failed">导入失败：%1$s</string>
+    <string name="cert_import_wrong_password">密码错误，请检查 .p12 证书文件的密码。</string>
     <string name="fingerprint">SHA-256 指纹</string>
     <string name="email">邮箱</string>
     <string name="cert_properties">证书属性</string>

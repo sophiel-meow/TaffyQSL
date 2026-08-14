@@ -228,6 +228,7 @@ class CertificateManager(private val context: Context) {
         }
 
     private fun importP12FromBytes(data: ByteArray, password: String): CertInfo {
+        // Password-less containers: try an empty password first, then a null one.
         val candidates: List<CharArray?> =
             if (password.isEmpty()) listOf(charArrayOf(), null) else listOf(password.toCharArray())
 
@@ -239,11 +240,35 @@ class CertificateManager(private val context: Context) {
                 lastError = e
             }
         }
+
+        // BC's KeyStore SPI cannot decrypt some containers (notably password-less
+        // PKCS#12 from modern OpenSSL: PBES2 + empty password, where its PBKDF2
+        // provider rejects an empty password). Fall back to a manual parser.
+        runCatching { Pkcs12Parser.parse(data, password) }.getOrNull()?.let { content ->
+            return importPkcs12Content(content)
+        }
+
         val cause = lastError ?: Exception("Cannot parse PKCS12 data")
         if (isPasswordError(cause)) {
             throw P12ImportPasswordException("Wrong or missing PKCS12 password", cause)
         }
         throw Exception("Invalid PKCS12 file", cause)
+    }
+
+    /**
+     * Import a [Pkcs12Parser.Pkcs12Content] extracted manually from a password-less
+     * PKCS#12 by re-wrapping it into an in-memory container that the normal import
+     * path (Android Keystore + encrypted key backup) can consume.
+     */
+    private fun importPkcs12Content(content: Pkcs12Parser.Pkcs12Content): CertInfo {
+        if (content.chain.isEmpty()) throw Exception("No certificate found in PKCS12 file")
+        val p12Store = p12KeyStore()
+        p12Store.load(null, null)
+        p12Store.setKeyEntry("certificate", content.privateKey, INTERNAL_P12_PASSWORD, content.chain)
+        val p12Bytes = ByteArrayOutputStream().also {
+            p12Store.store(it, INTERNAL_P12_PASSWORD)
+        }.toByteArray()
+        return parseP12(ByteArrayInputStream(p12Bytes), INTERNAL_P12_PASSWORD)
     }
 
     private fun p12KeyStore(): KeyStore =

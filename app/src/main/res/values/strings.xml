@@ -30,6 +30,7 @@
     <string name="cert_delete_message">Delete certificate for %1$s? This cannot be undone and will remove the private key.</string>
     <string name="cert_import_success">Certificate for %1$s imported successfully.</string>
     <string name="cert_import_failed">Import failed: %1$s</string>
+    <string name="cert_import_wrong_password">Incorrect password. Please check the password for the .p12 certificate file.</string>
     <string name="fingerprint">SHA-256 Fingerprint</string>
     <string name="email">Email</string>
     <string name="cert_properties">Certificate Properties</string>
