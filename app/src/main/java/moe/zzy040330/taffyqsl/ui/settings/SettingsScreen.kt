@@ -95,7 +95,7 @@ fun SettingsScreen(innerPadding: PaddingValues, navController: NavController) {
     }
 
     val exportTbkLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.CreateDocument("application/gzip")
+        ActivityResultContracts.CreateDocument("application/octet-stream")
     ) { uri ->
         uri?.let { backupViewModel.exportTbk(it) }
     }
