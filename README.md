@@ -84,7 +84,6 @@ cd TaffyQSL
 **Build Requirements**
 
 - JDK 21  
-- Android Studio (latest stable version)  
 - Android SDK with API version 36 or higher
 
 ## Disclaimer

@@ -74,7 +74,6 @@ cd TaffyQSL
 **ビルド要件**
 
 - JDK 21
-- Android Studio（最新安定版）
 - API レベル 36 以上の Android SDK
 
 ## 免責事項
