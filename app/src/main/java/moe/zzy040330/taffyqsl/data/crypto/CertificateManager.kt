@@ -23,12 +23,15 @@ import java.time.ZoneOffset
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
 import javax.crypto.spec.GCMParameterSpec
+import org.bouncycastle.jce.provider.BouncyCastleProvider
 
 class CertificateManager(private val context: Context) {
 
     companion object {
         const val CERTS_DIR = "certs"
         const val ANDROID_KEYSTORE = "AndroidKeyStore"
+
+        private val BC_PROVIDER by lazy { BouncyCastleProvider() }
 
         // Custom OIDs in ARRL certificates
         const val OID_CALLSIGN = "1.3.6.1.4.1.12348.1.1"
@@ -207,7 +210,7 @@ class CertificateManager(private val context: Context) {
     suspend fun importP12(uri: Uri, password: String): Result<CertInfo> =
         withContext(Dispatchers.IO) {
             runCatching {
-                val p12Store = KeyStore.getInstance("PKCS12")
+                val p12Store = KeyStore.getInstance("PKCS12", BC_PROVIDER)
                 val passwordChars: CharArray? =
                     if (password.isEmpty()) charArrayOf() else password.toCharArray()
 
@@ -414,7 +417,8 @@ class CertificateManager(private val context: Context) {
             val certChain = loadCertChain(alias) ?: arrayOf(cert)
 
             val exportPassword = if (password.isEmpty()) charArrayOf() else password.toCharArray()
-            val p12Store = KeyStore.getInstance("PKCS12")
+            // BC's default "PKCS12" encrypts certificates with RC2-40, which OpenSSL 3 rejects.
+            val p12Store = KeyStore.getInstance("PKCS12-3DES-3DES", BC_PROVIDER)
             p12Store.load(null, exportPassword)
 
             // Store the private key with the full cert chain
